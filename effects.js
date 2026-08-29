@@ -13,6 +13,12 @@
   mobileFix.href='mobile-fix.css?v=20260829-mobile-fix-4';
   document.head.appendChild(mobileFix);
 
+  // Public CMS loader: active offers are shown at the top, shop products are injected below offers.
+  const cmsScript=document.createElement('script');
+  cmsScript.src='cms-public.js?v=20260829-cms-1';
+  cmsScript.async=false;
+  document.head.appendChild(cmsScript);
+
   // Clean vector reconstruction of the supplied Plant Guide emblem.
   const emblem=`
     <svg viewBox="0 0 72 72" aria-hidden="true" focusable="false">

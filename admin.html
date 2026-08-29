@@ -1,0 +1,104 @@
+<!doctype html>
+<html lang="de">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+  <meta name="robots" content="noindex,nofollow,noarchive">
+  <meta name="theme-color" content="#153f20">
+  <title>Plant Guide · Admin</title>
+  <link rel="stylesheet" href="admin.css?v=20260829-cms-1">
+  <script defer src="admin.js?v=20260829-cms-1"></script>
+</head>
+<body>
+  <div class="admin-bg" aria-hidden="true"><span></span><span></span><span></span></div>
+
+  <main class="login-view" id="loginView">
+    <section class="login-card">
+      <div class="admin-brand">
+        <div class="admin-mark">❧</div>
+        <div><strong>Plant Guide</strong><small>ADMINBEREICH</small></div>
+      </div>
+      <p class="kicker">SICHERER ZUGANG</p>
+      <h1>Willkommen zurück.</h1>
+      <p class="muted">Angebote, Shop-Produkte und Medien zentral verwalten.</p>
+      <form id="loginForm" class="stack">
+        <label>Admin-Passwort<input id="password" type="password" autocomplete="current-password" required placeholder="Passwort eingeben"></label>
+        <button class="primary" type="submit">Einloggen <span>→</span></button>
+      </form>
+      <p class="status" id="loginStatus" aria-live="polite"></p>
+      <a class="back-link" href="/">← Zur Website</a>
+    </section>
+  </main>
+
+  <div class="dashboard" id="dashboard" hidden>
+    <aside class="sidebar">
+      <a class="side-brand" href="/" aria-label="Zur Plant Guide Website"><span>❧</span><div><strong>Plant Guide</strong><small>ADMIN</small></div></a>
+      <nav id="adminNav">
+        <button class="nav-item active" data-view="overview"><span>⌂</span>Übersicht</button>
+        <button class="nav-item" data-view="promotions"><span>✦</span>Angebote</button>
+        <button class="nav-item" data-view="products"><span>◫</span>Shop</button>
+        <button class="nav-item" data-view="media"><span>▧</span>Medien</button>
+      </nav>
+      <div class="side-bottom"><a href="/" target="_blank">Website öffnen ↗</a><button id="logoutBtn">Abmelden</button></div>
+    </aside>
+
+    <div class="admin-main">
+      <header class="topbar"><button class="mobile-nav-toggle" id="mobileNavToggle">☰</button><div><p class="kicker">PLANT GUIDE</p><h1 id="viewTitle">Übersicht</h1></div><div class="top-actions"><span class="live-dot"></span><span>Cloudflare CMS</span></div></header>
+
+      <section class="view active" data-panel="overview">
+        <div class="welcome-panel"><div><p class="kicker">INHALTE VERWALTEN</p><h2>Alles an einem Ort.</h2><p>Aktuelle Angebote erscheinen automatisch oben auf der Website. Shop-Produkte und Bilder können ohne neuen Code gepflegt werden.</p></div><div class="welcome-orb">❧</div></div>
+        <div class="stats"><article><span>Aktive Angebote</span><strong id="statPromos">0</strong></article><article><span>Shop-Produkte</span><strong id="statProducts">0</strong></article><article><span>Medien</span><strong id="statMedia">0</strong></article></div>
+        <div class="quick-grid"><button data-quick="promotion"><b>＋</b><span><strong>Neues Angebot</strong><small>Banner oben auf der Website</small></span></button><button data-quick="product"><b>＋</b><span><strong>Neues Produkt</strong><small>Preis, Bild & Beschreibung</small></span></button><button data-quick="media"><b>↑</b><span><strong>Bild hochladen</strong><small>JPG, PNG, WebP, AVIF</small></span></button></div>
+      </section>
+
+      <section class="view" data-panel="promotions">
+        <div class="section-toolbar"><div><p class="kicker">AKTUELLES</p><h2>Angebote & Hinweise</h2><p>Aktive Einträge werden als animierter Banner direkt unter der Navigation angezeigt.</p></div><button class="primary" data-open="promotion">＋ Angebot erstellen</button></div>
+        <div class="content-list" id="promotionList"></div>
+      </section>
+
+      <section class="view" data-panel="products">
+        <div class="section-toolbar"><div><p class="kicker">SHOP</p><h2>Produkte verwalten</h2><p>Produkte, Preise und Bilder bearbeiten oder aus dem Shop entfernen.</p></div><button class="primary" data-open="product">＋ Produkt hinzufügen</button></div>
+        <div class="product-admin-grid" id="productList"></div>
+      </section>
+
+      <section class="view" data-panel="media">
+        <div class="section-toolbar"><div><p class="kicker">MEDIATHEK</p><h2>Bilder & Medien</h2><p>Hochgeladene Bilder liegen privat in Cloudflare R2 und werden über die Website ausgeliefert.</p></div><label class="primary upload-button">↑ Bild hochladen<input id="mediaInput" type="file" accept="image/jpeg,image/png,image/webp,image/avif,image/gif" hidden></label></div>
+        <div class="upload-progress" id="uploadProgress" hidden><span></span><p>Bild wird hochgeladen …</p></div>
+        <div class="media-grid" id="mediaList"></div>
+      </section>
+    </div>
+  </div>
+
+  <div class="sheet" id="promotionSheet" hidden>
+    <div class="sheet-backdrop" data-close-sheet></div>
+    <form class="sheet-card" id="promotionForm">
+      <div class="sheet-head"><div><p class="kicker">ANGEBOT</p><h2 id="promotionHeading">Neues Angebot</h2></div><button type="button" class="close" data-close-sheet>×</button></div>
+      <input type="hidden" name="id">
+      <div class="form-grid"><label>Badge<input name="badge" maxlength="40" value="ANGEBOT" placeholder="z. B. NEU"></label><label>Reihenfolge<input name="sort_order" type="number" value="0"></label></div>
+      <label>Titel<input name="title" maxlength="140" required placeholder="z. B. Herbst-Angebot"></label>
+      <label>Kurzer Text<textarea name="text" rows="3" maxlength="500" placeholder="Was soll oben auf der Website stehen?"></textarea></label>
+      <div class="form-grid"><label>Button-Text<input name="button_label" maxlength="60" placeholder="Mehr erfahren"></label><label>Button-Ziel<input name="button_url" maxlength="500" placeholder="#kontakt oder https://..."></label></div>
+      <div class="form-grid"><label>Start optional<input name="starts_at" type="datetime-local"></label><label>Ende optional<input name="ends_at" type="datetime-local"></label></div>
+      <label class="switch-row"><span><strong>Aktiv</strong><small>Sofort auf der Website sichtbar</small></span><input name="active" type="checkbox" checked><i></i></label>
+      <div class="sheet-actions"><button type="button" class="ghost" data-close-sheet>Abbrechen</button><button class="primary" type="submit">Speichern</button></div>
+    </form>
+  </div>
+
+  <div class="sheet" id="productSheet" hidden>
+    <div class="sheet-backdrop" data-close-sheet></div>
+    <form class="sheet-card wide" id="productForm">
+      <div class="sheet-head"><div><p class="kicker">SHOP</p><h2 id="productHeading">Neues Produkt</h2></div><button type="button" class="close" data-close-sheet>×</button></div>
+      <input type="hidden" name="id">
+      <label>Produktname<input name="title" maxlength="160" required placeholder="Produktname"></label>
+      <label>Beschreibung<textarea name="description" rows="4" maxlength="1200" placeholder="Kurze Beschreibung für den Shop"></textarea></label>
+      <div class="form-grid"><label>Preis in €<input name="price" inputmode="decimal" required placeholder="29,90"></label><label>Alter Preis optional<input name="compare_price" inputmode="decimal" placeholder="39,90"></label></div>
+      <div class="form-grid"><label>Reihenfolge<input name="sort_order" type="number" value="0"></label><label>Bildbeschreibung<input name="image_alt" maxlength="180" placeholder="Was ist auf dem Bild zu sehen?"></label></div>
+      <fieldset class="media-picker"><legend>Produktbild</legend><input type="hidden" name="image_key"><div class="selected-media" id="selectedProductMedia"><span>Noch kein Bild ausgewählt</span></div><div class="mini-media-grid" id="productMediaPicker"></div></fieldset>
+      <label class="switch-row"><span><strong>Aktiv</strong><small>Im öffentlichen Shop anzeigen</small></span><input name="active" type="checkbox" checked><i></i></label>
+      <div class="sheet-actions"><button type="button" class="ghost" data-close-sheet>Abbrechen</button><button class="primary" type="submit">Speichern</button></div>
+    </form>
+  </div>
+
+  <div class="toast" id="toast" hidden></div>
+</body>
+</html>

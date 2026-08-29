@@ -1,0 +1,15 @@
+# Wird von deploy.mjs automatisch als wrangler.cms.toml erzeugt.
+# Die echte D1-ID wird nicht fest in dieses Beispiel geschrieben.
+name = "plant-guideeh"
+compatibility_date = "2026-08-29"
+pages_build_output_dir = "./.deploy"
+
+[[d1_databases]]
+binding = "DB"
+database_name = "plant-guide-db"
+database_id = "<WIRD_VON_DEPLOY_MJS_GESETZT>"
+migrations_dir = "migrations"
+
+[[r2_buckets]]
+binding = "MEDIA"
+bucket_name = "plant-guide-media"

@@ -1,0 +1,11 @@
+{
+  "name": "plant-guide-cloudflare-cms",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "deploy:cms": "node deploy.mjs"
+  },
+  "engines": {
+    "node": ">=20"
+  }
+}
