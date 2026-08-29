@@ -1,38 +1,25 @@
 #!/usr/bin/env node
 import {spawnSync} from 'node:child_process';
 import {cpSync,existsSync,mkdirSync,rmSync,writeFileSync} from 'node:fs';
-import {randomBytes} from 'node:crypto';
-import {createInterface} from 'node:readline/promises';
-import {stdin as input,stdout as output} from 'node:process';
 
 const PROJECT='plant-guideeh';
 const DB_NAME='plant-guide-db';
 const BUCKET='plant-guide-media';
 const NPX=process.platform==='win32'?'npx.cmd':'npx';
-const rl=createInterface({input,output});
 
-function run(args,{stdin,allowFail=false,quiet=false}={}){
-  const result=spawnSync(NPX,['--yes','wrangler@latest',...args],{encoding:'utf8',input:stdin,stdio:stdin!==undefined?['pipe','pipe','pipe']:(quiet?['inherit','pipe','pipe']:'inherit')});
+function run(args,{allowFail=false,quiet=false}={}){
+  const result=spawnSync(NPX,['--yes','wrangler@latest',...args],{encoding:'utf8',stdio:quiet?['inherit','pipe','pipe']:'inherit'});
   if(result.error)throw result.error;
   if(result.status!==0&&!allowFail){if(result.stdout)console.error(result.stdout);if(result.stderr)console.error(result.stderr);throw new Error(`Wrangler fehlgeschlagen: ${args.join(' ')}`)}
   return result;
 }
 function parseJson(text){const s=String(text||'').trim();const starts=[s.indexOf('{'),s.indexOf('[')].filter(i=>i>=0);if(!starts.length)throw new Error('Kein JSON in Wrangler-Ausgabe gefunden.');const start=Math.min(...starts);const end=Math.max(s.lastIndexOf('}'),s.lastIndexOf(']'));return JSON.parse(s.slice(start,end+1))}
-async function getPassword(){
-  if(process.env.PLANT_GUIDE_ADMIN_PASSWORD)return process.env.PLANT_GUIDE_ADMIN_PASSWORD;
-  console.log('\nAdmin-Passwort festlegen (mindestens 12 Zeichen).');
-  const first=await rl.question('Passwort: ');
-  if(first.length<12)throw new Error('Bitte ein Passwort mit mindestens 12 Zeichen verwenden.');
-  const second=await rl.question('Passwort wiederholen: ');
-  if(first!==second)throw new Error('Die Passwörter stimmen nicht überein.');
-  return first;
-}
 function ensureD1(){
   let info=run(['d1','info',DB_NAME,'--json'],{allowFail:true,quiet:true});
   if(info.status!==0){
     console.log(`\nD1 „${DB_NAME}“ wird angelegt …`);
-    let created=run(['d1','create',DB_NAME,'--jurisdiction','eu','--binding','DB'],{allowFail:true});
-    if(created.status!==0){console.log('EU-Jurisdiction konnte nicht gesetzt werden, zweiter Versuch …');run(['d1','create',DB_NAME,'--binding','DB']);}
+    let created=run(['d1','create',DB_NAME,'--jurisdiction','eu','--binding','DB','--update-config=false'],{allowFail:true});
+    if(created.status!==0){console.log('EU-Jurisdiction konnte nicht gesetzt werden, zweiter Versuch …');run(['d1','create',DB_NAME,'--binding','DB','--update-config=false']);}
     info=run(['d1','info',DB_NAME,'--json'],{quiet:true});
   }
   const data=parseJson(info.stdout);const id=data.uuid||data.id||data.database_id;
@@ -64,9 +51,11 @@ try{
   console.log('3/7 R2 vorbereiten …');ensureR2();
   console.log('4/7 Wrangler-Konfiguration erzeugen …');writeConfig(dbId);
   console.log('5/7 Datenbank-Migrationen anwenden …');run(['d1','migrations','apply',DB_NAME,'--remote','--config','wrangler.cms.toml']);
-  console.log('6/7 Admin-Zugang als Cloudflare Secret setzen …');const password=await getPassword();run(['pages','secret','put','ADMIN_PASSWORD','--project-name',PROJECT,'--config','wrangler.cms.toml'],{stdin:password+'\n'});const nonce=randomBytes(8).toString('hex');console.log(`Secret gesetzt · ${nonce.slice(0,6)}`);
+  console.log('\n6/7 Admin-Passwort als Cloudflare Secret setzen …');
+  console.log('Wrangler fragt das Passwort sicher ab; es wird nicht im Repository gespeichert.');
+  run(['pages','secret','put','ADMIN_PASSWORD','--project-name',PROJECT,'--config','wrangler.cms.toml']);
   console.log('7/7 Website + Pages Functions deployen …');buildStatic();run(['pages','deploy','.deploy','--project-name',PROJECT,'--branch','main','--config','wrangler.cms.toml']);
   console.log('\n✓ Fertig. Admin: https://'+PROJECT+'.pages.dev/admin.html');
   console.log('✓ D1: '+DB_NAME+' · R2: '+BUCKET);
   console.log('Hinweis: wrangler.cms.toml enthält nur die D1-ID, keine Passwörter. Das Passwort liegt ausschließlich als Cloudflare Secret.');
-}catch(error){console.error('\n✗ Deploy abgebrochen:',error.message);process.exitCode=1}finally{rl.close()}
+}catch(error){console.error('\n✗ Deploy abgebrochen:',error.message);process.exitCode=1}
