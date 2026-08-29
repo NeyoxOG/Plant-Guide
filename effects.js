@@ -2,11 +2,16 @@
   const root=document.documentElement;
   const reduce=matchMedia('(prefers-reduced-motion: reduce)').matches;
 
-  // Load the final responsive layer after all existing styles.
+  // Load the final responsive layers after all existing styles.
   const polish=document.createElement('link');
   polish.rel='stylesheet';
   polish.href='polish.css?v=20260829-mobile-fix-4';
   document.head.appendChild(polish);
+
+  const mobileFix=document.createElement('link');
+  mobileFix.rel='stylesheet';
+  mobileFix.href='mobile-fix.css?v=20260829-mobile-fix-4';
+  document.head.appendChild(mobileFix);
 
   // Clean vector reconstruction of the supplied Plant Guide emblem.
   const emblem=`
