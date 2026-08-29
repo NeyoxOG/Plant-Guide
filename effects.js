@@ -16,7 +16,8 @@
   `;
   document.head.appendChild(brandStyle);
 
-  const brandHTML='<img class="supplied-brand-image" src="assets/plant-guide-logo.webp" alt="Plant Guide – Natürlich. Ganzheitlich. Für dich.">';
+  // Versioned URL prevents browsers/Cloudflare from showing the previous flattened cached image.
+  const brandHTML='<img class="supplied-brand-image" src="assets/plant-guide-logo.webp?v=transparent-20260829-2" alt="Plant Guide – Natürlich. Ganzheitlich. Für dich.">';
   document.querySelectorAll('.brand').forEach((brand,index)=>{
     brand.classList.add('supplied-brand');
     if(index>0) brand.classList.add('footer-supplied-brand');
