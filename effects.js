@@ -2,14 +2,18 @@
   const root=document.documentElement;
   const reduce=matchMedia('(prefers-reduced-motion: reduce)').matches;
 
-  // Load the final responsive layer after all existing styles.
+  // Load the final responsive layers after all existing styles.
   const polish=document.createElement('link');
   polish.rel='stylesheet';
-  polish.href='polish.css?v=20260829-final-2';
+  polish.href='polish.css?v=20260829-mobile-fix-4';
   document.head.appendChild(polish);
 
+  const mobileFix=document.createElement('link');
+  mobileFix.rel='stylesheet';
+  mobileFix.href='mobile-fix.css?v=20260829-mobile-fix-4';
+  document.head.appendChild(mobileFix);
+
   // Clean vector reconstruction of the supplied Plant Guide emblem.
-  // This avoids Safari/iPad raster artefacts from the original stacked PNG/WebP.
   const emblem=`
     <svg viewBox="0 0 72 72" aria-hidden="true" focusable="false">
       <circle cx="36" cy="36" r="32" fill="#f8f6e9" stroke="#b99a45" stroke-width="1.5"/>
@@ -54,6 +58,26 @@
 
   document.querySelectorAll('.big-leaf').forEach(el=>el.innerHTML=leafIcon);
 
+  // Updated contact e-mail everywhere on the main page.
+  const CONTACT_EMAIL='praxisnaturpur@gmail.com';
+  document.querySelectorAll('a[href^="mailto:"]').forEach(link=>{
+    link.href=`mailto:${CONTACT_EMAIL}`;
+    if(link.textContent.includes('@')) link.textContent=CONTACT_EMAIL;
+  });
+
+  // Replace the branded bottle hero photo with a calmer, neutral botanical image.
+  const heroImage=document.querySelector('.hero-image');
+  if(heroImage){
+    heroImage.src='https://images.unsplash.com/photo-1545558509-ebcff83ba6c1?auto=format&fit=crop&fm=jpg&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&ixlib=rb-4.1.0&q=60&w=3000';
+    heroImage.alt='Ruhige botanische Szene mit Sukkulenten und Natursteinen';
+    heroImage.removeAttribute('srcset');
+  }
+  const heroCredit=document.querySelector('.hero-image-wrap .image-credit');
+  if(heroCredit){
+    heroCredit.href='https://unsplash.com/photos/green-succulent-beside-gray-stones-CfJH45PU_yc';
+    heroCredit.textContent='Foto: Vanessa Bucceri · Unsplash';
+  }
+
   let ticking=false;
   const update=()=>{
     const y=window.scrollY||0;
@@ -66,7 +90,7 @@
       const speed=parseFloat(el.dataset.parallax||'.08');
       const r=el.getBoundingClientRect();
       const center=r.top+r.height/2-innerHeight/2;
-      el.style.setProperty('--py',`${Math.max(-34,Math.min(34,-center*speed))}px`);
+      el.style.setProperty('--py',`${Math.max(-30,Math.min(30,-center*speed))}px`);
     });
     ticking=false;
   };

@@ -36,8 +36,27 @@ const serviceCopy={
   'Fussreflexzonenmassage':'Eine ruhige Auszeit mit Fokus auf Entspannung und Wohlbefinden. Die Anwendung ist als ergänzendes Wellness-Angebot gedacht und ersetzt keine medizinische Behandlung.',
   'Ernährungsberatung / Umstellung':'Persönliche Orientierung für eine alltagstaugliche Ernährung. Bei diagnostizierten Erkrankungen erfolgt die Begleitung ergänzend und sollte mit medizinischem Fachpersonal abgestimmt werden.'
 };
-function showModal(modal){modal.classList.add('show');modal.setAttribute('aria-hidden','false');document.body.style.overflow='hidden'}
-function hideModal(modal){modal.classList.remove('show');modal.setAttribute('aria-hidden','true');document.body.style.overflow=''}
+
+function resetHorizontalScroll(){
+  document.documentElement.scrollLeft=0;
+  document.body.scrollLeft=0;
+}
+function showModal(modal){
+  resetHorizontalScroll();
+  modal.classList.add('show');
+  modal.setAttribute('aria-hidden','false');
+  document.documentElement.classList.add('modal-open');
+  document.body.style.overflow='hidden';
+  requestAnimationFrame(()=>qs('.modal-close',modal)?.focus({preventScroll:true}));
+}
+function hideModal(modal){
+  modal.classList.remove('show');
+  modal.setAttribute('aria-hidden','true');
+  document.documentElement.classList.remove('modal-open');
+  document.body.style.overflow='';
+  requestAnimationFrame(resetHorizontalScroll);
+}
+
 qsa('[data-service]').forEach(btn=>btn.addEventListener('click',()=>{const k=btn.dataset.service;serviceTitle.textContent=k;serviceText.textContent=serviceCopy[k]||'';showModal(serviceModal)}));
 qsa('[data-close]').forEach(el=>el.addEventListener('click',()=>hideModal(serviceModal)));
 
@@ -63,4 +82,5 @@ if(stage && matchMedia('(pointer:fine)').matches){
   stage.addEventListener('pointerleave',()=>{qsa('.leaf-cluster',stage).forEach(el=>el.style.translate='');const disc=qs('.quote-disc',stage);if(disc)disc.style.margin=''});
 }
 
+addEventListener('orientationchange',()=>setTimeout(resetHorizontalScroll,120));
 const year=qs('#year'); if(year) year.textContent=new Date().getFullYear();
