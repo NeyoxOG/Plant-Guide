@@ -2,141 +2,58 @@
   const root=document.documentElement;
   const reduce=matchMedia('(prefers-reduced-motion: reduce)').matches;
 
-  /*
-   * Compact brand treatment for the supplied transparent Plant Guide artwork.
-   * The uploaded logo is square/stacked, so using it as a 245px-wide image made
-   * the navigation extremely tall on iPad. We now isolate its circular emblem
-   * and pair it with a clean horizontal wordmark. This keeps the supplied logo
-   * artwork while avoiding the corrupted/oversized lower wordmark raster.
-   */
-  const brandStyle=document.createElement('style');
-  brandStyle.textContent=`
-    .supplied-brand{
-      display:flex!important;
-      align-items:center!important;
-      gap:10px!important;
-      min-width:0!important;
-      flex:0 0 auto!important;
-      background:transparent!important;
-      padding:0!important;
-      overflow:visible!important;
-    }
-    .supplied-mark{
-      position:relative;
-      display:block;
-      flex:0 0 64px;
-      width:64px;
-      height:64px;
-      overflow:hidden;
-      border-radius:50%;
-      background:transparent;
-      filter:drop-shadow(0 5px 12px rgba(26,65,30,.12));
-    }
-    .supplied-mark img{
-      position:absolute;
-      width:104px;
-      height:104px;
-      max-width:none!important;
-      left:50%;
-      top:-1px;
-      transform:translateX(-50%);
-      object-fit:contain;
-      object-position:center top;
-      clip-path:circle(30.5% at 50% 32%);
-      -webkit-clip-path:circle(30.5% at 50% 32%);
-      background:transparent!important;
-      border:0!important;
-      box-shadow:none!important;
-    }
-    .supplied-wordmark{
-      display:flex;
-      min-width:0;
-      flex-direction:column;
-      line-height:1;
-      white-space:nowrap;
-    }
-    .supplied-wordmark strong{
-      font:italic 2rem/1 Georgia,serif;
-      font-weight:500;
-      color:#123f20;
-      letter-spacing:-.035em;
-    }
-    .supplied-wordmark small{
-      margin-top:6px;
-      font-size:.54rem;
-      font-weight:700;
-      letter-spacing:.075em;
-      color:#243b2a;
-    }
-    .site-header .nav-shell{
-      min-height:80px!important;
-      padding-top:8px!important;
-      padding-bottom:8px!important;
-    }
-    .site-header .supplied-brand{max-width:245px!important}
+  // Load the final responsive layer after all existing styles.
+  const polish=document.createElement('link');
+  polish.rel='stylesheet';
+  polish.href='polish.css?v=20260829-final-2';
+  document.head.appendChild(polish);
 
-    .footer-supplied-brand{
-      width:max-content!important;
-      max-width:100%!important;
-      padding:0!important;
-      background:transparent!important;
-      border:0!important;
-      box-shadow:none!important;
-    }
-    .footer-supplied-brand .supplied-mark{
-      width:72px;
-      height:72px;
-      flex-basis:72px;
-      filter:drop-shadow(0 5px 14px rgba(0,0,0,.22));
-    }
-    .footer-supplied-brand .supplied-mark img{width:116px;height:116px}
-    .footer-supplied-brand .supplied-wordmark strong{color:#f3f0df;font-size:2.05rem}
-    .footer-supplied-brand .supplied-wordmark small{color:#d9e4d4}
-
-    @media(max-width:1180px){
-      .supplied-mark{width:58px;height:58px;flex-basis:58px}
-      .supplied-mark img{width:95px;height:95px}
-      .supplied-wordmark strong{font-size:1.75rem}
-      .supplied-wordmark small{font-size:.48rem}
-      .site-header .supplied-brand{max-width:215px!important}
-    }
-    @media(max-width:820px){
-      .site-header .nav-shell{min-height:68px!important}
-      .supplied-mark{width:52px;height:52px;flex-basis:52px}
-      .supplied-mark img{width:85px;height:85px}
-      .supplied-wordmark strong{font-size:1.5rem}
-      .supplied-wordmark small{font-size:.42rem;margin-top:4px}
-      .site-header .supplied-brand{max-width:190px!important}
-      .footer-supplied-brand .supplied-mark{width:62px;height:62px;flex-basis:62px}
-      .footer-supplied-brand .supplied-mark img{width:101px;height:101px}
-    }
-    @media(max-width:560px){
-      .supplied-mark{width:46px;height:46px;flex-basis:46px}
-      .supplied-mark img{width:75px;height:75px}
-      .supplied-wordmark strong{font-size:1.34rem}
-      .supplied-wordmark small{display:none}
-      .site-header .supplied-brand{max-width:160px!important}
-      .footer-supplied-brand .supplied-wordmark small{display:block}
-    }
-  `;
-  document.head.appendChild(brandStyle);
+  // Clean vector reconstruction of the supplied Plant Guide emblem.
+  // This avoids Safari/iPad raster artefacts from the original stacked PNG/WebP.
+  const emblem=`
+    <svg viewBox="0 0 72 72" aria-hidden="true" focusable="false">
+      <circle cx="36" cy="36" r="32" fill="#f8f6e9" stroke="#b99a45" stroke-width="1.5"/>
+      <circle cx="36" cy="36" r="28.8" fill="none" stroke="#1b5727" stroke-width="2.4"/>
+      <path d="M35 56C35 44 37 31 42 18" fill="none" stroke="#b69b54" stroke-width="1.8" stroke-linecap="round"/>
+      <path d="M35 55C29 45 22 35 15 26" fill="none" stroke="#b69b54" stroke-width="1.6" stroke-linecap="round"/>
+      <path d="M35 55C43 48 51 42 59 37" fill="none" stroke="#b69b54" stroke-width="1.6" stroke-linecap="round"/>
+      <path d="M34 53C22 50 15 42 14 28C25 29 34 36 37 48C37 50 36 52 34 53Z" fill="#2e692f" stroke="#174c24" stroke-width=".8"/>
+      <path d="M38 49C37 35 43 23 56 16C58 29 53 42 41 51C40 51 39 50 38 49Z" fill="#0f4a24" stroke="#123f20" stroke-width=".8"/>
+      <path d="M39 54C45 45 53 41 62 41C60 51 53 57 42 58C40 57 39 56 39 54Z" fill="#7d9f45" stroke="#426a2c" stroke-width=".8"/>
+      <path d="M21 43C26 39 30 37 35 36M45 39C49 34 52 29 54 23M46 52C51 49 55 46 59 44" fill="none" stroke="#d8c487" stroke-width="1" stroke-linecap="round"/>
+      <circle cx="28" cy="16" r="2.6" fill="#70843f"/><circle cx="38" cy="12.5" r="2.2" fill="#b6923f"/><circle cx="44" cy="19" r="2.1" fill="#557a31"/>
+    </svg>`;
 
   const brandHTML=`
-    <span class="supplied-mark" aria-hidden="true">
-      <img src="assets/plant-guide-logo.webp?v=brand-emblem-20260829-3" alt="">
-    </span>
-    <span class="supplied-wordmark">
+    <span class="brand-emblem">${emblem}</span>
+    <span class="brand-lockup">
       <strong>Plant Guide</strong>
       <small>NATÜRLICH. GANZHEITLICH. FÜR DICH.</small>
     </span>`;
 
   document.querySelectorAll('.brand').forEach((brand,index)=>{
-    brand.classList.add('supplied-brand');
+    brand.classList.add('vector-brand');
+    brand.classList.remove('supplied-brand');
     if(index>0) brand.classList.add('footer-supplied-brand');
     brand.innerHTML=brandHTML;
   });
 
-  // The photography stays exactly as defined in index.html.
+  const phoneIcon=`<svg class="ui-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M5.2 3.8 8.4 3l1.8 4.1-2.1 1.7a15.3 15.3 0 0 0 7.1 7.1l1.7-2.1L21 15.6l-.8 3.2c-.3 1.2-1.4 2-2.6 1.9C10 20 4 14 3.3 6.4c-.1-1.2.7-2.3 1.9-2.6Z"/></svg>`;
+  const calendarIcon=`<svg class="ui-icon" viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="5" width="18" height="16" rx="3"/><path d="M7 3v4M17 3v4M3 10h18M8 14h2M14 14h2M8 17h2M14 17h2"/></svg>`;
+  const leafIcon=`<svg class="ui-leaf" viewBox="0 0 48 48" aria-hidden="true"><path d="M8 38C11 21 23 10 40 7c-2 17-12 29-29 34" fill="#275f2d"/><path d="M11 39c8-11 16-19 27-28" fill="none" stroke="#f4f0d9" stroke-width="2" stroke-linecap="round"/></svg>`;
+
+  document.querySelectorAll('.phone-pill').forEach(el=>{
+    const text=el.textContent.replace(/☎/g,'').trim();
+    el.innerHTML=`${phoneIcon}<span class="phone-text">${text}</span>`;
+  });
+
+  document.querySelectorAll('.btn-icon').forEach(icon=>{
+    const link=icon.closest('a');
+    icon.innerHTML=link?.getAttribute('href')?.startsWith('tel:')?phoneIcon:calendarIcon;
+  });
+
+  document.querySelectorAll('.big-leaf').forEach(el=>el.innerHTML=leafIcon);
+
   let ticking=false;
   const update=()=>{
     const y=window.scrollY||0;
@@ -144,11 +61,12 @@
     const p=Math.min(1,Math.max(0,y/max));
     root.style.setProperty('--scrollY',y.toFixed(0));
     root.style.setProperty('--scrollP',p.toFixed(4));
+
     document.querySelectorAll('[data-parallax]').forEach(el=>{
       const speed=parseFloat(el.dataset.parallax||'.08');
       const r=el.getBoundingClientRect();
       const center=r.top+r.height/2-innerHeight/2;
-      el.style.setProperty('--py',`${Math.max(-42,Math.min(42,-center*speed))}px`);
+      el.style.setProperty('--py',`${Math.max(-34,Math.min(34,-center*speed))}px`);
     });
     ticking=false;
   };
@@ -167,12 +85,17 @@
   const revealEls=[...document.querySelectorAll('.reveal')];
   if('IntersectionObserver' in window){
     const io=new IntersectionObserver(entries=>entries.forEach(entry=>{
-      if(entry.isIntersecting){entry.target.classList.add('is-visible');io.unobserve(entry.target)}
+      if(entry.isIntersecting){
+        entry.target.classList.add('is-visible');
+        io.unobserve(entry.target);
+      }
     }),{threshold:.09,rootMargin:'0px 0px -7%'});
     revealEls.forEach(el=>io.observe(el));
-  }else revealEls.forEach(el=>el.classList.add('is-visible'));
+  }else{
+    revealEls.forEach(el=>el.classList.add('is-visible'));
+  }
 
   document.querySelectorAll('.benefit-grid .reveal,.offer-grid .reveal').forEach((el,i)=>{
-    el.style.transitionDelay=`${Math.min(i%6,5)*70}ms`;
+    el.style.transitionDelay=`${Math.min(i%6,5)*65}ms`;
   });
 })();
