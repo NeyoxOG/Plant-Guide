@@ -1,4 +1,5 @@
-export async function onRequestGet({request,env}){
+export async function onRequest({request,env}){
+  if(request.method!=='GET'&&request.method!=='HEAD')return new Response('Method not allowed',{status:405,headers:{allow:'GET, HEAD'}});
   if(!env.MEDIA)return new Response('Media binding missing',{status:503});
   const url=new URL(request.url);
   const key=decodeURIComponent(url.pathname.replace(/^\/media\/?/,'')).replace(/^\/+/,"");
@@ -10,7 +11,5 @@ export async function onRequestGet({request,env}){
   headers.set('etag',object.httpEtag);
   headers.set('cache-control','public, max-age=31536000, immutable');
   headers.set('x-content-type-options','nosniff');
-  return new Response(object.body,{headers});
+  return new Response(request.method==='HEAD'?null:object.body,{headers});
 }
-
-export async function onRequest(){return new Response('Method not allowed',{status:405,headers:{allow:'GET'}})}
