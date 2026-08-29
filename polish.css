@@ -1,0 +1,132 @@
+/* Final responsive polish for Plant Guide */
+
+/* ---------- Header / brand ---------- */
+.site-header{padding-top:14px}
+.nav-shell{width:min(1260px,calc(100% - 32px));gap:14px;padding:9px 12px 9px 14px;min-height:72px}
+.desktop-nav{display:flex;align-items:center;justify-content:center;flex:1 1 auto;min-width:0;gap:clamp(11px,1.2vw,19px);font-size:.84rem}
+.desktop-nav a{white-space:nowrap;padding:10px 0}
+.nav-actions{display:flex;align-items:center;gap:8px;flex:0 0 auto}
+.phone-pill{min-height:44px;padding:9px 13px;font-size:.9rem}
+.site-header .btn-small{min-height:44px;padding:9px 14px;font-size:.84rem;white-space:nowrap}
+
+.vector-brand{display:flex!important;align-items:center!important;gap:9px!important;min-width:0!important;flex:0 0 auto!important;padding:0!important;background:transparent!important;overflow:visible!important}
+.vector-brand .brand-emblem{width:54px;height:54px;flex:0 0 54px;display:grid;place-items:center;filter:drop-shadow(0 5px 10px rgba(27,70,34,.12))}
+.vector-brand .brand-emblem svg{display:block;width:100%;height:100%}
+.vector-brand .brand-lockup{display:flex;flex-direction:column;line-height:1;white-space:nowrap;min-width:0}
+.vector-brand .brand-lockup strong{font:italic 500 1.62rem/1 Georgia,serif;letter-spacing:-.035em;color:#123f20}
+.vector-brand .brand-lockup small{margin-top:5px;font-size:.42rem;font-weight:800;letter-spacing:.075em;color:#2a432f}
+.site-header .vector-brand{max-width:208px!important}
+
+.footer-supplied-brand{display:flex!important;align-items:center!important;gap:10px!important;background:transparent!important;border:0!important;box-shadow:none!important;padding:0!important;width:max-content!important;max-width:100%!important}
+.footer-supplied-brand .brand-emblem{width:58px;height:58px;flex-basis:58px;filter:drop-shadow(0 6px 15px rgba(0,0,0,.2))}
+.footer-supplied-brand .brand-lockup strong{font-size:1.68rem;color:#f3f0df}
+.footer-supplied-brand .brand-lockup small{font-size:.42rem;color:#d9e4d4}
+
+.ui-icon{display:block;width:18px;height:18px;fill:none;stroke:currentColor;stroke-width:1.9;stroke-linecap:round;stroke-linejoin:round}
+.phone-pill .ui-icon{display:inline-block;vertical-align:-3px;margin-right:7px;color:var(--green)}
+.btn .ui-icon{width:17px;height:17px;flex:0 0 17px}
+
+/* ---------- Hero ---------- */
+.hero{padding-top:46px;padding-bottom:72px}
+.hero-grid{grid-template-columns:minmax(0,1.06fr) minmax(430px,.94fr);gap:clamp(30px,3vw,46px);align-items:center}
+.hero-copy{min-width:0;max-width:650px}
+.hero-copy h1{line-height:.96}
+.hero-copy h1 span,.hero-copy h1 em{font-size:clamp(3.85rem,4.65vw,5.1rem)!important;line-height:.96!important;white-space:nowrap}
+.hero-copy h1 span{letter-spacing:-.045em!important}
+.hero-copy h1 em{margin-top:5px}
+.lead{max-width:620px;font-size:1.04rem;line-height:1.52;margin:22px 0 23px}
+.hero-actions{gap:12px}
+.hero-actions .btn{min-height:51px;padding:13px 20px}
+.mini-values{gap:18px;margin-top:20px}
+
+.hero-art{height:460px!important;min-width:0}
+.botanical-stage{border-radius:34px!important;overflow:hidden!important}
+.hero-image-wrap{border-radius:34px!important;box-shadow:0 24px 55px rgba(32,67,37,.15)}
+.hero-image{object-position:52% center;transform:scale(1.035) translate3d(0,calc(var(--scrollP) * -18px),0)!important}
+.hero-image-wrap::after{background:linear-gradient(90deg,rgba(245,248,237,.10),rgba(255,255,255,0) 42%,rgba(31,80,35,.04)),linear-gradient(180deg,transparent 62%,rgba(18,58,28,.08))!important}
+.hero-art .leaf-cluster,.hero-art .hero-ribbon{display:none!important}
+.quote-disc{width:205px!important;left:52%!important;top:45%!important;box-shadow:0 0 0 6px rgba(255,255,255,.28),0 18px 40px rgba(53,80,43,.14),inset 0 0 30px rgba(255,255,255,.7)!important}
+.quote-disc span{font-size:1.62rem!important;line-height:1.08!important}
+.quote-disc i{font-size:1.8rem!important;bottom:24px!important}
+.balance-card{right:16px!important;bottom:16px!important;max-width:232px;padding:14px 16px!important;gap:10px!important;font-size:.88rem;line-height:1.35}
+.balance-card .big-leaf{font-size:0!important;width:42px;height:42px;flex:0 0 42px;display:grid;place-items:center}
+.balance-card .big-leaf .ui-leaf{width:38px;height:38px}
+
+/* ---------- General refinement ---------- */
+.section{scroll-margin-top:96px}
+.feature-card,.offer-card,.review-card,.faq,.soft-card,.cta-card{backdrop-filter:blur(8px)}
+.offer-card{border-radius:22px}
+.offer-photo{transform:scale(1.01)}
+.offer-card:hover .offer-photo{transform:scale(1.055)}
+.process-track{max-width:920px}
+
+/* ---------- Landscape tablets / smaller notebooks ---------- */
+@media (max-width:1280px){
+  .nav-shell{width:min(1190px,calc(100% - 28px));gap:11px}
+  .site-header .vector-brand{max-width:188px!important}
+  .vector-brand .brand-emblem{width:48px;height:48px;flex-basis:48px}
+  .vector-brand .brand-lockup strong{font-size:1.42rem}
+  .vector-brand .brand-lockup small{font-size:.37rem;margin-top:4px}
+  .desktop-nav{gap:11px;font-size:.79rem}
+  .phone-pill{font-size:.84rem;padding-inline:11px}
+  .site-header .btn-small{font-size:.79rem;padding-inline:12px}
+  .hero-grid{grid-template-columns:minmax(0,1.06fr) minmax(400px,.94fr);gap:30px}
+  .hero-copy h1 span,.hero-copy h1 em{font-size:clamp(3.55rem,4.65vw,4.4rem)!important}
+  .hero-art{height:430px!important}
+  .quote-disc{width:190px!important}
+  .quote-disc span{font-size:1.48rem!important}
+}
+
+@media (max-width:1130px){
+  .phone-pill{display:none!important}
+  .nav-shell{gap:12px}
+  .desktop-nav{gap:14px;font-size:.82rem}
+  .site-header .vector-brand{max-width:196px!important}
+  .hero-copy h1 span,.hero-copy h1 em{font-size:clamp(3.35rem,5.1vw,4rem)!important}
+  .hero-art{height:410px!important}
+}
+
+/* Switch to compact navigation before labels start wrapping */
+@media (max-width:1010px){
+  .desktop-nav,.nav-actions{display:none!important}
+  .menu-toggle{display:block!important;margin-left:auto}
+  .site-header .vector-brand{max-width:205px!important}
+  .nav-shell{min-height:66px!important;padding:7px 12px!important}
+}
+
+@media (max-width:900px){
+  .hero{padding-top:34px}
+  .hero-grid{grid-template-columns:1fr!important;gap:26px}
+  .hero-copy{max-width:720px;margin:auto;text-align:center}
+  .hero-copy .eyebrow{margin-inline:auto}
+  .hero-copy h1 span,.hero-copy h1 em{white-space:normal;font-size:clamp(3rem,9vw,4.7rem)!important}
+  .lead{margin-inline:auto}
+  .hero-actions,.mini-values{justify-content:center}
+  .hero-art{height:410px!important;max-width:720px;width:100%;margin:4px auto 0}
+  .quote-disc{width:180px!important}
+  .balance-card{max-width:210px;font-size:.82rem}
+}
+
+@media (max-width:620px){
+  .site-header{padding-top:8px}
+  .nav-shell{width:calc(100% - 16px);border-radius:20px}
+  .vector-brand .brand-emblem{width:43px;height:43px;flex-basis:43px}
+  .vector-brand .brand-lockup strong{font-size:1.28rem}
+  .vector-brand .brand-lockup small{display:none}
+  .site-header .vector-brand{max-width:155px!important}
+  .hero-copy h1 span,.hero-copy h1 em{font-size:clamp(2.7rem,13vw,3.8rem)!important}
+  .hero-art{height:340px!important}
+  .quote-disc{width:152px!important;left:50%!important}
+  .quote-disc span{font-size:1.2rem!important}
+  .quote-disc i{font-size:1.45rem!important;bottom:17px!important}
+  .balance-card{right:8px!important;bottom:8px!important;max-width:184px;padding:11px 12px!important;font-size:.73rem}
+  .balance-card .big-leaf{width:34px;height:34px;flex-basis:34px}
+  .mini-values{gap:8px}
+  .mini-values span{font-size:.78rem;padding:7px 9px;border-radius:999px;background:rgba(255,255,255,.56)}
+  .footer-supplied-brand .brand-emblem{width:50px;height:50px;flex-basis:50px}
+  .footer-supplied-brand .brand-lockup strong{font-size:1.42rem}
+}
+
+@media (prefers-reduced-motion:reduce){
+  .hero-image{transform:none!important}
+}
