@@ -1,6 +1,7 @@
 node_modules/
-.deploy/
-wrangler.cms.toml
-.dev.vars*
-.env*
+.wrangler/
+.dev.vars
+.dev.vars.*
+.env
+.env.*
 .DS_Store

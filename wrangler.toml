@@ -1,3 +1,15 @@
-name = "plant-guide"
-compatibility_date = "2026-08-28"
-pages_build_output_dir = "."
+name = "plant-guideeh"
+compatibility_date = "2026-08-29"
+pages_build_output_dir = "./public"
+
+# Cloudflare Pages Functions use the bindings below.
+# Create the resources once, then paste the D1 database id and uncomment the blocks.
+#
+# [[d1_databases]]
+# binding = "DB"
+# database_name = "plant-guide-db"
+# database_id = "PASTE_D1_DATABASE_ID_HERE"
+#
+# [[r2_buckets]]
+# binding = "MEDIA"
+# bucket_name = "plant-guide-media"
