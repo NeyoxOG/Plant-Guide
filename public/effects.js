@@ -5,13 +5,18 @@
   // Load the final responsive layers after all existing styles.
   const polish=document.createElement('link');
   polish.rel='stylesheet';
-  polish.href='polish.css?v=20260829-mobile-fix-4';
+  polish.href='polish.css?v=20260908-botanical-1';
   document.head.appendChild(polish);
 
   const mobileFix=document.createElement('link');
   mobileFix.rel='stylesheet';
-  mobileFix.href='mobile-fix.css?v=20260829-mobile-fix-4';
+  mobileFix.href='mobile-fix.css?v=20260908-botanical-1';
   document.head.appendChild(mobileFix);
+
+  const refresh=document.createElement('link');
+  refresh.rel='stylesheet';
+  refresh.href='design-refresh.css?v=20260908-botanical-1';
+  document.head.appendChild(refresh);
 
   // Public CMS loader: active offers are shown at the top, shop products are injected below offers.
   const cmsScript=document.createElement('script');
@@ -146,3 +151,4 @@
     el.style.transitionDelay=`${Math.min(i%6,5)*65}ms`;
   });
 })();
+
