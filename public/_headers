@@ -13,3 +13,10 @@
 
 /api/*
   Cache-Control: no-store
+
+/admin
+  Cache-Control: no-store
+  X-Robots-Tag: noindex, nofollow, noarchive
+
+/admin-v2.js
+  Cache-Control: no-cache
