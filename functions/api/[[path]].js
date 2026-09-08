@@ -2,6 +2,7 @@ const JSON_HEADERS={"content-type":"application/json; charset=utf-8","cache-cont
 const COOKIE_NAME="pg_admin";
 const MAX_UPLOAD=8*1024*1024;
 const ALLOWED_IMAGE_TYPES={"image/jpeg":"jpg","image/png":"png","image/webp":"webp","image/avif":"avif","image/gif":"gif"};
+const textEncoder=new TextEncoder();
 
 const json=(data,status=200,headers={})=>new Response(JSON.stringify(data),{status,headers:{...JSON_HEADERS,...headers}});
 const nowIso=()=>new Date().toISOString();
@@ -12,9 +13,12 @@ const nullableIso=v=>{if(!v)return null;const d=new Date(v);return Number.isNaN(
 const safeUrl=v=>{const s=clean(v,500);if(!s)return"";if(s.startsWith("/")||s.startsWith("#")||/^https?:\/\//i.test(s)||/^mailto:/i.test(s)||/^tel:/i.test(s))return s;return""};
 
 function getCookie(req,name){const raw=req.headers.get("cookie")||"";for(const part of raw.split(";")){const [k,...rest]=part.trim().split("=");if(k===name)return decodeURIComponent(rest.join("="))}return""}
-function b64url(bytes){let s="";for(const b of bytes)s+=String.fromCharCode(b);return btoa(s).replace(/\+/g,"-").replace(/\//g,"_").replace(/=+$/g,"")}
-async function sha256(value){const buf=await crypto.subtle.digest("SHA-256",new TextEncoder().encode(String(value)));return [...new Uint8Array(buf)].map(b=>b.toString(16).padStart(2,"0")).join("")}
+function b64(bytes){let s="";for(const b of bytes)s+=String.fromCharCode(b);return btoa(s)}
+function fromB64(value){return Uint8Array.from(atob(String(value||"")),c=>c.charCodeAt(0))}
+function b64url(bytes){return b64(bytes).replace(/\+/g,"-").replace(/\//g,"_").replace(/=+$/g,"")}
+async function sha256(value){const buf=await crypto.subtle.digest("SHA-256",textEncoder.encode(String(value)));return [...new Uint8Array(buf)].map(b=>b.toString(16).padStart(2,"0")).join("")}
 async function sameSecret(a,b){const [ha,hb]=await Promise.all([sha256(a),sha256(b)]);let diff=ha.length^hb.length;for(let i=0;i<Math.min(ha.length,hb.length);i++)diff|=ha.charCodeAt(i)^hb.charCodeAt(i);return diff===0}
+async function derivePassword(password,saltB64,iterations){const key=await crypto.subtle.importKey("raw",textEncoder.encode(String(password)),"PBKDF2",false,["deriveBits"]);const bits=await crypto.subtle.deriveBits({name:"PBKDF2",hash:"SHA-256",salt:fromB64(saltB64),iterations:Math.max(100000,int(iterations,210000))},key,256);return b64(new Uint8Array(bits))}
 function sessionCookie(token,maxAge=604800){return `${COOKIE_NAME}=${encodeURIComponent(token)}; Path=/; HttpOnly; Secure; SameSite=Strict; Max-Age=${maxAge}`}
 function noSessionCookie(){return `${COOKIE_NAME}=; Path=/; HttpOnly; Secure; SameSite=Strict; Max-Age=0`}
 
@@ -50,13 +54,17 @@ async function deleteMedia(env,id){const miss=await requireBindings(env,{media:t
 export async function onRequest(context){
  const {request,env}=context;const url=new URL(request.url);const parts=url.pathname.replace(/^\/api\/?/,"").split("/").filter(Boolean);const route=parts[0]||"";const method=request.method.toUpperCase();
  if(method==="OPTIONS")return new Response(null,{status:204});
- if(route==="health"&&method==="GET")return json({ok:true,configured:!!env.DB,media:!!env.MEDIA,adminSecret:!!env.ADMIN_PASSWORD});
+ if(route==="health"&&method==="GET")return json({ok:true,configured:!!env.DB,media:!!env.MEDIA,auth:"d1-admin-users"});
  if(route==="public"&&method==="GET")return publicState(env);
  if(route==="login"&&method==="POST"){
-   const miss=await requireBindings(env);if(miss)return miss;if(!env.ADMIN_PASSWORD)return json({ok:false,error:"ADMIN_PASSWORD ist noch nicht als Cloudflare Secret gesetzt."},503);
+   const miss=await requireBindings(env);if(miss)return miss;
    const rate=await loginRateState(env,request);if(rate.blocked)return json({ok:false,error:"Zu viele Fehlversuche. Bitte in 15 Minuten erneut versuchen."},429);
-   const b=await bodyJson(request);if(!(await sameSecret(clean(b.password,300),env.ADMIN_PASSWORD))){await recordFailedLogin(env,rate);return json({ok:false,error:"Passwort ist nicht korrekt."},401)}
-   await clearFailedLogin(env,rate.id);const bytes=crypto.getRandomValues(new Uint8Array(32));const token=b64url(bytes);const hash=await sha256(token);const expires=new Date(Date.now()+7*864e5).toISOString();await env.DB.prepare("DELETE FROM admin_sessions WHERE expires_at<=?").bind(nowIso()).run();await env.DB.prepare("INSERT INTO admin_sessions(token_hash,expires_at) VALUES(?,?)").bind(hash,expires).run();return json({ok:true},200,{"set-cookie":sessionCookie(token)});
+   const b=await bodyJson(request);const username=clean(b.username,80);const password=clean(b.password,300);
+   const user=username?await env.DB.prepare("SELECT username,password_hash,password_salt,password_iterations,active FROM admin_users WHERE username=? COLLATE NOCASE LIMIT 1").bind(username).first():null;
+   let valid=false;
+   if(user?.active){const derived=await derivePassword(password,user.password_salt,user.password_iterations);valid=await sameSecret(derived,user.password_hash)}
+   if(!valid){await recordFailedLogin(env,rate);return json({ok:false,error:"Benutzername oder Passwort ist nicht korrekt."},401)}
+   await clearFailedLogin(env,rate.id);const bytes=crypto.getRandomValues(new Uint8Array(32));const token=b64url(bytes);const hash=await sha256(token);const expires=new Date(Date.now()+7*864e5).toISOString();await env.DB.prepare("DELETE FROM admin_sessions WHERE expires_at<=?").bind(nowIso()).run();await env.DB.prepare("INSERT INTO admin_sessions(token_hash,expires_at) VALUES(?,?)").bind(hash,expires).run();return json({ok:true,user:user.username},200,{"set-cookie":sessionCookie(token)});
  }
  if(route==="logout"&&method==="POST"){
    const token=getCookie(request,COOKIE_NAME);if(env.DB&&token)await env.DB.prepare("DELETE FROM admin_sessions WHERE token_hash=?").bind(await sha256(token)).run();return json({ok:true},200,{"set-cookie":noSessionCookie()});
