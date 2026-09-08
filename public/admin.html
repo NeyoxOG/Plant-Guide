@@ -7,8 +7,8 @@
   <meta name="theme-color" content="#153f20">
   <title>Plant Guide · Admin</title>
   <link rel="stylesheet" href="admin.css?v=20260908-login-2">
-  <link rel="stylesheet" href="admin-fix.css?v=20260908-d1-media-1">
-  <script defer src="admin-v2.js?v=20260908-d1-media-1"></script>
+  <link rel="stylesheet" href="admin-fix.css?v=20260908-cms-2">
+  <script defer src="admin-v2.js?v=20260908-cms-2"></script>
 <link rel="stylesheet" href="usability.css?v=1"><script defer src="usability.js?v=1"></script></head>
 <body>
   <div class="admin-bg" aria-hidden="true"><span></span><span></span><span></span></div>
@@ -21,7 +21,7 @@
       </div>
       <p class="kicker">SICHERER ZUGANG</p>
       <h1>Willkommen zurück.</h1>
-      <p class="muted">Angebote, Shop-Produkte und Medien zentral verwalten.</p>
+      <p class="muted">Leistungen, Preise, Botschaften, Shop-Produkte und Bilder zentral verwalten.</p>
       <form id="loginForm" class="stack">
         <label>Benutzername<input id="username" name="username" type="text" autocomplete="username" required value="Nicole" placeholder="Benutzername"></label>
         <label>Passwort<input id="password" name="password" type="password" autocomplete="current-password" required placeholder="Passwort eingeben"></label>
@@ -40,7 +40,9 @@
       <nav id="adminNav">
         <button class="nav-item active" data-view="overview"><span>⌂</span>Übersicht</button>
         <button class="nav-item" data-view="promotions"><span>✦</span>Angebote</button>
+        <button class="nav-item" data-view="services"><span>◇</span>Leistungen</button>
         <button class="nav-item" data-view="products"><span>◫</span>Shop</button>
+        <button class="nav-item" data-view="content"><span>¶</span>Seitentexte</button>
         <button class="nav-item" data-view="media"><span>▧</span>Medien</button>
       </nav>
       <div class="side-bottom"><a href="/" target="_blank">Website öffnen ↗</a><button id="logoutBtn">Abmelden</button></div>
@@ -54,18 +56,23 @@
       </header>
 
       <section class="view active" data-panel="overview">
-        <div class="welcome-panel"><div><p class="kicker">INHALTE VERWALTEN</p><h2>Alles an einem Ort.</h2><p>Aktuelle Angebote erscheinen automatisch oben auf der Website. Shop-Produkte und Bilder können ohne neuen Code gepflegt werden.</p></div><div class="welcome-orb">❧</div></div>
-        <div class="stats"><article><span>Aktive Angebote</span><strong id="statPromos">0</strong></article><article><span>Shop-Produkte</span><strong id="statProducts">0</strong></article><article><span>Medien</span><strong id="statMedia">0</strong></article></div>
+        <div class="welcome-panel"><div><p class="kicker">INHALTE VERWALTEN</p><h2>Alles an einem Ort.</h2><p>Hier lassen sich Angebote, Leistungen, Preise, Seitentexte, Shop-Produkte und Bilder direkt pflegen.</p></div><div class="welcome-orb">❧</div></div>
+        <div class="stats"><article><span>Aktive Botschaften</span><strong id="statPromos">0</strong></article><article><span>Leistungen</span><strong id="statServices">0</strong></article><article><span>Shop-Produkte</span><strong id="statProducts">0</strong></article><article><span>Medien</span><strong id="statMedia">0</strong></article></div>
         <div class="system-panel">
           <div class="system-panel-head"><div><h3>Cloudflare Systemstatus</h3><p>Die Verbindung wird direkt gegen die aktiven Pages Functions geprüft.</p></div><button class="connection-retry" id="connectionRetryDashboard" type="button">Neu prüfen</button></div>
           <div class="system-grid"><div class="system-item" id="systemDb"><i></i><span><strong>D1</strong><small>Wird geprüft</small></span></div><div class="system-item" id="systemMedia"><i></i><span><strong>Bilder</strong><small>Wird geprüft</small></span></div><div class="system-item" id="systemAuth"><i></i><span><strong>Login</strong><small>Wird geprüft</small></span></div></div>
         </div>
-        <div class="quick-grid"><button data-quick="promotion"><b>＋</b><span><strong>Neues Angebot</strong><small>Banner oben auf der Website</small></span></button><button data-quick="product"><b>＋</b><span><strong>Neues Produkt</strong><small>Preis, Bild & Beschreibung</small></span></button><button data-quick="media"><b>↑</b><span><strong>Bild hochladen</strong><small>JPG, PNG, WebP, AVIF</small></span></button></div>
+        <div class="quick-grid"><button data-quick="promotion"><b>＋</b><span><strong>Neue Botschaft</strong><small>Banner oben auf der Website</small></span></button><button data-quick="service"><b>＋</b><span><strong>Neue Leistung</strong><small>Preis, Bild und Beschreibung</small></span></button><button data-quick="product"><b>＋</b><span><strong>Neues Produkt</strong><small>Shop-Angebot hinzufügen</small></span></button><button data-quick="content"><b>✎</b><span><strong>Seitentexte</strong><small>Wichtige Aussagen bearbeiten</small></span></button></div>
       </section>
 
       <section class="view" data-panel="promotions">
-        <div class="section-toolbar"><div><p class="kicker">AKTUELLES</p><h2>Angebote & Hinweise</h2><p>Aktive Einträge werden als animierter Banner direkt unter der Navigation angezeigt.</p></div><button class="primary" data-open="promotion">＋ Angebot erstellen</button></div>
+        <div class="section-toolbar"><div><p class="kicker">AKTUELLES</p><h2>Botschaften & Angebote</h2><p>Aktive Einträge werden als Banner direkt unter der Navigation angezeigt.</p></div><button class="primary" data-open="promotion">＋ Botschaft erstellen</button></div>
         <div class="content-list" id="promotionList"></div>
+      </section>
+
+      <section class="view" data-panel="services">
+        <div class="section-toolbar"><div><p class="kicker">GERADE VERFÜGBAR</p><h2>Leistungen verwalten</h2><p>Alle bestehenden Karten samt Preis, Bild, Kurztext und Detailtext bearbeiten.</p></div><button class="primary" data-open="service">＋ Leistung hinzufügen</button></div>
+        <div class="product-admin-grid" id="serviceList"></div>
       </section>
 
       <section class="view" data-panel="products">
@@ -77,6 +84,17 @@
         <div class="section-toolbar"><div><p class="kicker">MEDIATHEK</p><h2>Bilder & Medien</h2><p>Fotos werden automatisch verkleinert und im Bildspeicher gesichert. Maximal 8 MB als Original, 1 MB nach Optimierung. Animierte Bilder werden als Standbild gespeichert.</p></div><label class="primary upload-button">↑ Bild hochladen<input id="mediaInput" type="file" accept="image/jpeg,image/png,image/webp,image/avif,image/gif" hidden></label></div>
         <div class="upload-progress" id="uploadProgress" hidden><span></span><p>Bild wird hochgeladen …</p></div>
         <div class="media-grid" id="mediaList"></div>
+      </section>
+
+      <section class="view" data-panel="content">
+        <div class="section-toolbar"><div><p class="kicker">WEBSITE</p><h2>Botschaften & Seitentexte</h2><p>Die wichtigsten Überschriften und Texte ändern, ohne die Gestaltung zu beeinflussen.</p></div></div>
+        <form class="content-editor" id="contentForm">
+          <fieldset><legend>Startbereich</legend><label>Kleine Überschrift<input name="hero_eyebrow" maxlength="220"></label><div class="form-grid"><label>Hauptüberschrift<input name="hero_title" maxlength="220" required></label><label>Handschriftliche Zeile<input name="hero_accent" maxlength="220" required></label></div><label>Einleitung<textarea name="hero_text" rows="3" maxlength="2400"></textarea></label></fieldset>
+          <fieldset><legend>Angebotsbereich</legend><label>Überschrift<input name="offers_title" maxlength="220" required></label><label>Einleitung<textarea name="offers_text" rows="3" maxlength="2400"></textarea></label></fieldset>
+          <fieldset><legend>Über mich</legend><label>Überschrift<input name="about_title" maxlength="220" required></label><label>Text<textarea name="about_text" rows="5" maxlength="2400"></textarea></label></fieldset>
+          <fieldset><legend>Kontaktbereich</legend><label>Überschrift<input name="contact_title" maxlength="220" required></label><label>Text<textarea name="contact_text" rows="3" maxlength="2400"></textarea></label></fieldset>
+          <div class="sticky-save"><span>Änderungen erscheinen nach dem Speichern automatisch auf der Website.</span><button class="primary" type="submit">Seitentexte speichern</button></div>
+        </form>
       </section>
     </div>
   </div>
@@ -111,9 +129,26 @@
     </form>
   </div>
 
+  <div class="sheet" id="serviceSheet" hidden>
+    <div class="sheet-backdrop" data-close-sheet></div>
+    <form class="sheet-card wide" id="serviceForm">
+      <div class="sheet-head"><div><p class="kicker">LEISTUNG</p><h2 id="serviceHeading">Neue Leistung</h2></div><button type="button" class="close" aria-label="Schließen" data-close-sheet>×</button></div>
+      <input type="hidden" name="id"><input type="hidden" name="image_url">
+      <label>Name der Leistung<input name="title" maxlength="160" required placeholder="z. B. Wohlfühlberatung"></label>
+      <label>Kurzbeschreibung<textarea name="description" rows="3" maxlength="1200" placeholder="Text auf der Karte"></textarea></label>
+      <label>Detailtext<textarea name="detail_text" rows="5" maxlength="2400" placeholder="Ausführlicher Text im Fenster ‚Mehr erfahren‘"></textarea></label>
+      <div class="form-grid"><label>Preis in €<input name="price" pattern="[0-9]+([,.][0-9]{1,2})?" inputmode="decimal" required placeholder="25,00"></label><label>Alter Preis optional<input name="compare_price" pattern="[0-9]+([,.][0-9]{1,2})?" inputmode="decimal" placeholder="35,00"></label></div>
+      <div class="form-grid"><label>Reihenfolge<input name="sort_order" type="number" value="0"></label><label>Bildbeschreibung<input name="image_alt" maxlength="180" placeholder="Was ist auf dem Bild zu sehen?"></label></div>
+      <fieldset class="media-picker"><legend>Bild der Leistung</legend><input type="hidden" name="image_key"><div class="selected-media" id="selectedServiceMedia"><span>Vorhandenes Bild wird weiterverwendet</span></div><div class="mini-media-grid" id="serviceMediaPicker"></div></fieldset>
+      <label class="switch-row"><span><strong>Sichtbar</strong><small>Unter „Meine Angebote“ anzeigen</small></span><input name="active" type="checkbox" checked><i></i></label>
+      <div class="sheet-actions"><button type="button" class="ghost" data-close-sheet>Abbrechen</button><button class="primary" type="submit">Speichern</button></div>
+    </form>
+  </div>
+
   <div class="toast" id="toast" hidden></div>
   <script>
     document.getElementById('connectionRetryDashboard')?.addEventListener('click',()=>document.getElementById('connectionRetry')?.click());
   </script>
 </body>
 </html>
+
