@@ -5,17 +5,17 @@
   // Load the final responsive layers after all existing styles.
   const polish=document.createElement('link');
   polish.rel='stylesheet';
-  polish.href='polish.css?v=20260908-botanical-1';
+  polish.href='polish.css?v=20260908-final-1';
   document.head.appendChild(polish);
 
   const mobileFix=document.createElement('link');
   mobileFix.rel='stylesheet';
-  mobileFix.href='mobile-fix.css?v=20260908-botanical-1';
+  mobileFix.href='mobile-fix.css?v=20260908-final-1';
   document.head.appendChild(mobileFix);
 
   const refresh=document.createElement('link');
   refresh.rel='stylesheet';
-  refresh.href='design-refresh.css?v=20260908-botanical-1';
+  refresh.href='design-refresh.css?v=20260908-final-1';
   document.head.appendChild(refresh);
 
   // The public CMS is loaded once by index.html.
@@ -63,12 +63,13 @@
     icon.innerHTML=link?.getAttribute('href')?.startsWith('tel:')?phoneIcon:calendarIcon;
   });
 
-  document.querySelectorAll('.big-leaf').forEach(el=>el.innerHTML=leafIcon);
+  document.querySelectorAll('.big-leaf,.cta-leaf').forEach(el=>el.innerHTML=leafIcon);
 
   // Updated contact e-mail everywhere on the main page.
   const CONTACT_EMAIL='praxisnaturpur@gmail.com';
   document.querySelectorAll('a[href^="mailto:"]').forEach(link=>{
-    link.href=`mailto:${CONTACT_EMAIL}`;
+    const query=link.getAttribute('href').split('?')[1];
+    link.href=`mailto:${CONTACT_EMAIL}${query?'?'+query:''}`;
     if(link.textContent.includes('@')) link.textContent=CONTACT_EMAIL;
   });
 

@@ -40,3 +40,68 @@ body{background:
 @media(max-width:430px){.botanical-stage::before{left:11%;width:150px}.section-head::before{width:31px;height:31px;line-height:31px}}
 @media(prefers-reduced-motion:reduce){.motion-bg::before{animation:none}}
 
+/* A consistent rhythm from the first offer to the final contact. */
+.section{padding-block:clamp(54px,6vw,88px)}
+.hero{padding-top:42px}
+.section-head h2,.about-copy h2,.cta-card h2{font-size:clamp(2.05rem,3.5vw,3.15rem)!important;line-height:1.08!important;letter-spacing:-.035em;text-wrap:balance}
+.section-head>p:last-child{line-height:1.65;max-width:58ch;margin-inline:auto}
+.eyebrow{font-size:.7rem;letter-spacing:.14em}
+.offers{background:linear-gradient(180deg,rgba(253,252,246,.35),rgba(253,252,246,.82),rgba(253,252,246,.35));border-block:1px solid rgba(55,96,42,.08)}
+.feature-card{padding:25px 16px;box-shadow:0 10px 28px rgba(32,66,36,.06)}
+.feature-card p{font-size:.86rem;line-height:1.6}
+.offer-grid{align-items:stretch;gap:22px}
+.offer-card{display:flex;flex-direction:column;background:#fcfbf5;border-radius:26px;overflow:hidden}
+.offer-visual{height:205px;flex:none}
+.offer-body{display:flex;flex:1;flex-direction:column;padding:24px}
+.offer-body h3{font-size:1.35rem;line-height:1.18;overflow-wrap:break-word;hyphens:auto}
+.offer-body p{font-size:.92rem;line-height:1.6;min-height:0;margin-bottom:18px}
+.offer-body .price{margin-top:auto;padding-top:8px;align-items:baseline}
+.price strong,.cms-product-price strong{font-variant-numeric:tabular-nums;color:#214d2a}
+.offer-body .link-btn{display:flex;align-items:center;justify-content:space-between;min-height:44px;margin-top:16px;padding-top:14px;border-top:1px solid rgba(42,89,38,.13);text-align:left}
+.cms-product-card{background:#fcfbf5;border-radius:26px}
+.cms-product-body{padding:24px}
+.cms-promo-dots button{min-width:24px;min-height:24px;border:8px solid #f5f6ed;background-clip:padding-box}
+.about-grid{gap:48px;align-items:center}
+.about-copy>p:not(.eyebrow){line-height:1.8;color:#4e6152;max-width:54ch}
+.about-copy h2{max-width:16ch}
+.about-values{flex-wrap:wrap}
+.soft-card{padding:28px;background:linear-gradient(145deg,#fcfbf3,#eaf0db)}
+.check-list li{font-size:.88rem;line-height:1.55;border:1px solid rgba(42,89,38,.08)}
+.brush-quote{background:radial-gradient(ellipse at 100% 0%,#50733d,transparent 75%),#194c2b;border-radius:32px 32px 70px 32px;box-shadow:0 18px 40px rgba(21,65,32,.13)}
+.brush-quote span{font-size:1.5rem;line-height:1.5}
+.process-track{width:100%;padding:22px 26px;border:1px solid rgba(42,89,38,.14);box-shadow:0 12px 30px rgba(32,66,36,.07)}
+.step{gap:10px}.step b{box-shadow:0 0 0 5px rgba(173,193,139,.2)}
+.knowledge-grid{align-items:stretch;gap:28px}
+.review-card{display:flex;flex-direction:column;align-items:center;justify-content:center;padding:38px;background:linear-gradient(145deg,#fdfcf6,#eaf0dd)}
+.review-card p{max-width:34ch;line-height:1.7}.review-card .btn{margin-top:12px}
+.faq{padding:28px;background:#fcfbf5}
+.faq-item{border:1px solid rgba(42,89,38,.12);border-radius:16px;margin-top:10px;overflow:hidden;background:rgba(255,255,255,.45)}
+.faq-item>button{padding:16px 18px;min-height:58px;gap:18px;font-size:.95rem;line-height:1.45}
+.faq-item>button>span{flex:none;color:#3c6836}
+.faq-item.open{background:#eef3e5;border-color:rgba(42,89,38,.23)}
+.faq-answer p{min-height:0;padding:0 18px;margin:0;color:#4d6051;line-height:1.7}
+.faq-item.open .faq-answer p{padding:0 18px 16px}
+.cta-card{padding:44px;background:radial-gradient(ellipse at 0% 100%,#436c37,transparent 80%),#17472a;color:#f9f8ee;border:1px solid #315a37;box-shadow:0 22px 50px rgba(24,63,33,.18)}
+.cta-card>div{position:relative;z-index:1}
+.cta-card h2{color:#fffdf3}.cta-card p{color:#e0e8d7}
+.cta-card .eyebrow{color:#e6eddc;background:rgba(255,255,255,.07);border-color:rgba(237,241,218,.25)}
+.cta-card .btn-primary{background:#eef2df;color:#193e25;border-color:#eef2df;box-shadow:none}
+.cta-card .btn-ghost{color:#fffdf3;background:rgba(255,255,255,.08);border-color:rgba(255,255,255,.32)}
+.cta-card .cta-leaf{color:#d7e4bd}
+.cta-leaf .ui-leaf{width:56px;height:56px}
+.cta-leaf .ui-leaf path:first-child{fill:#d7e4bd}
+.cta-leaf .ui-leaf path:last-child{stroke:#315a37}
+.cta-card::after{border-color:rgba(236,241,213,.3);width:270px;height:270px;right:-90px;top:-80px;box-shadow:0 0 0 22px rgba(255,255,255,.025)}
+.contact-address{font-style:normal;font-size:.9rem;line-height:1.65;color:#e0e8d7;text-align:center;margin:8px 0 0}
+.site-footer{background:linear-gradient(135deg,#153d25,#102c1d);border-top:1px solid rgba(211,223,190,.25)}
+.footer-grid h4{font-size:.75rem;text-transform:uppercase;letter-spacing:.12em;color:#bdcca9}
+.footer-grid>div>a{padding-block:3px}.footer-grid a:hover{color:#fff;text-decoration:underline;text-underline-offset:4px}
+.legal{padding:64px 0}.legal-card{padding:clamp(24px,5vw,52px);background:#fcfbf5;border-top:4px solid #57733c}
+.legal-card h1{font-size:clamp(2.2rem,5vw,3rem);letter-spacing:-.03em}.legal-card h2{margin-top:30px;font-size:1.4rem}
+.legal-card p,.legal-card li{line-height:1.8;overflow-wrap:anywhere}
+@media(max-width:1120px){.about-grid{gap:32px}.about-copy h2{margin-inline:auto}.process-track{flex-wrap:wrap;justify-content:center;gap:20px}}
+@media(max-width:720px){.section-head{margin-bottom:28px}.offer-body{padding:22px}.about-copy h2{max-width:18ch}.about-art{gap:18px}.brush-quote{min-height:240px}.faq,.review-card{padding:22px}.process-track{display:grid;grid-template-columns:1fr 1fr;gap:22px 14px;padding:24px 18px;border-radius:24px;overflow:visible}.process-track>i{display:none}.step{min-width:0;flex-direction:column;text-align:center;gap:12px}.step span{font-size:.85rem}.cta-card{padding:30px 22px}.contact-address{font-size:.85rem}.footer-bottom{gap:16px}.about-copy>p:not(.eyebrow){margin-inline:auto}}
+@media(hover:none){.offer-card:hover,.feature-card:hover,.cms-product-card:hover{transform:none}}
+/* Long German service names need generous text columns. */
+@media(min-width:1121px){.offer-grid{grid-template-columns:repeat(2,minmax(0,1fr))}.offer-card{display:grid;grid-template-columns:minmax(0,.36fr) minmax(0,.64fr)}.offer-visual{height:100%;min-height:310px}.offer-body{min-width:0}.offer-body h3{font-size:1.25rem;text-wrap:balance}.offer-body .link-btn{padding-inline:12px}}
+
