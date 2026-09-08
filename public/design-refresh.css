@@ -89,6 +89,8 @@ body{background:
 .cta-card .btn-ghost{color:#fffdf3;background:rgba(255,255,255,.08);border-color:rgba(255,255,255,.32)}
 .cta-card .cta-leaf{color:#d7e4bd}
 .cta-leaf .ui-leaf{width:56px;height:56px}
+.cta-leaf .ui-leaf path:first-child{fill:#d7e4bd}
+.cta-leaf .ui-leaf path:last-child{stroke:#315a37}
 .cta-card::after{border-color:rgba(236,241,213,.3);width:270px;height:270px;right:-90px;top:-80px;box-shadow:0 0 0 22px rgba(255,255,255,.025)}
 .contact-address{font-style:normal;font-size:.9rem;line-height:1.65;color:#e0e8d7;text-align:center;margin:8px 0 0}
 .site-footer{background:linear-gradient(135deg,#153d25,#102c1d);border-top:1px solid rgba(211,223,190,.25)}
