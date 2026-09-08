@@ -13,6 +13,18 @@ const boolInt=v=>v===true||v===1||v==="1"?1:0;
 const int=(v,fallback=0)=>Number.isFinite(Number(v))?Math.trunc(Number(v)):fallback;
 const nullableIso=v=>{if(!v)return null;const d=new Date(v);return Number.isNaN(d.getTime())?null:d.toISOString()};
 const safeUrl=v=>{const s=clean(v,500);if(!s)return"";return s.startsWith("/")||s.startsWith("#")||/^https?:\/\//i.test(s)||/^mailto:/i.test(s)||/^tel:/i.test(s)?s:""};
+const DEFAULT_CONTENT={
+  hero_eyebrow:"GANZHEITLICH. NATÜRLICH. INDIVIDUELL.",hero_title:"Deine Gesundheit.",hero_accent:"Mein Herzensweg.",hero_text:"Ganzheitliche Unterstützung für Körper, Geist und Seele – natürlich, individuell und mit einem offenen Ohr für dich.",
+  offers_title:"Individuelle Unterstützung für deinen Alltag",offers_text:"Ein klarer Einstieg, transparente Preise und persönliche Begleitung.",
+  about_title:"Hallo, ich bin Nicole Seufert.",about_text:"Ich begleite dich mit Herz, Fachwissen und natürlichen Impulsen auf deinem Weg zu mehr Wohlbefinden. Mein Ziel ist es, dich individuell, ehrlich und ganzheitlich zu unterstützen – mit einem offenen Ohr, fundiertem Wissen und Vertrauen in die Kraft der Natur.",
+  contact_title:"Bereit für den ersten Schritt?",contact_text:"Lass uns gemeinsam etwas verändern. Für dich. Für morgen. Für dein Leben."
+};
+const DEFAULT_SERVICES=[
+  ["Schulter- & Nackenproblematik","Sanfte Impulse bei Verspannungen im Schulter- und Nackenbereich.","Ein sanfter, persönlicher Termin mit Fokus auf Entspannung, Wahrnehmung und alltagstaugliche Impulse für Schulter und Nacken.",2500,3500,"/assets/offer-stones.webp","Schwarze Wellness-Steine",10],
+  ["Analyse von Nahrungsergänzungsmitteln","Individuelle Einordnung und Orientierung zur Einnahme und Optimierung.","Wir schauen gemeinsam auf deine vorhandenen Präparate, Ziele und Fragen. Bei medizinischen Indikationen oder Wechselwirkungen ist eine ärztliche beziehungsweise pharmazeutische Rücksprache wichtig.",2500,4000,"/assets/offer-supplements.webp","Nahrungsergänzungsmittel",20],
+  ["Fußreflexzonenmassage","Auszeit vom Alltag und entspannende Unterstützung bei verschiedenen Beschwerden.","Eine ruhige Auszeit mit Fokus auf Entspannung und Wohlbefinden. Die Anwendung ist als ergänzendes Wellness-Angebot gedacht und ersetzt keine medizinische Behandlung.",2500,4000,"/assets/offer-reflexology.webp","Ruhige Wellness-Szene",30],
+  ["Ernährungsberatung / Umstellung","Individuelle Begleitung bei Ernährungsfragen und einer alltagstauglichen Umstellung.","Persönliche Orientierung für eine alltagstaugliche Ernährung. Bei diagnostizierten Erkrankungen erfolgt die Begleitung ergänzend und sollte mit medizinischem Fachpersonal abgestimmt werden.",3000,7000,"/assets/offer-nutrition.webp","Frischer grüner Salat",40]
+];
 
 function getCookie(req,name){for(const part of (req.headers.get("cookie")||"").split(";")){const [k,...rest]=part.trim().split("=");if(k===name)return decodeURIComponent(rest.join("="))}return""}
 function b64url(bytes){let s="";for(const b of bytes)s+=String.fromCharCode(b);return btoa(s).replace(/\+/g,"-").replace(/\//g,"_").replace(/=+$/g,"")}
@@ -35,6 +47,11 @@ async function ensureSchema(env){
     CREATE TABLE IF NOT EXISTS shop_products (
       id INTEGER PRIMARY KEY AUTOINCREMENT,title TEXT NOT NULL,description TEXT NOT NULL DEFAULT '',price_cents INTEGER NOT NULL DEFAULT 0 CHECK(price_cents>=0),compare_at_cents INTEGER CHECK(compare_at_cents IS NULL OR compare_at_cents>=0),image_key TEXT,image_alt TEXT NOT NULL DEFAULT '',active INTEGER NOT NULL DEFAULT 1 CHECK(active IN(0,1)),sort_order INTEGER NOT NULL DEFAULT 0,created_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP,updated_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP
     );
+    CREATE TABLE IF NOT EXISTS services (
+      id INTEGER PRIMARY KEY AUTOINCREMENT,title TEXT NOT NULL,description TEXT NOT NULL DEFAULT '',detail_text TEXT NOT NULL DEFAULT '',price_cents INTEGER NOT NULL DEFAULT 0 CHECK(price_cents>=0),compare_at_cents INTEGER CHECK(compare_at_cents IS NULL OR compare_at_cents>=0),image_key TEXT,image_url TEXT NOT NULL DEFAULT '',image_alt TEXT NOT NULL DEFAULT '',active INTEGER NOT NULL DEFAULT 1 CHECK(active IN(0,1)),sort_order INTEGER NOT NULL DEFAULT 0,created_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP,updated_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP
+    );
+    CREATE TABLE IF NOT EXISTS site_content (key TEXT PRIMARY KEY,value TEXT NOT NULL DEFAULT '',updated_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP);
+    CREATE TABLE IF NOT EXISTS app_meta (key TEXT PRIMARY KEY,value TEXT NOT NULL DEFAULT '');
     CREATE TABLE IF NOT EXISTS admin_sessions (
       token_hash TEXT PRIMARY KEY,username TEXT NOT NULL DEFAULT 'Nicole',expires_at TEXT NOT NULL,created_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP
     );
@@ -43,9 +60,17 @@ async function ensureSchema(env){
     );
     CREATE INDEX IF NOT EXISTS idx_promotions_public ON promotions(active,sort_order,id);
     CREATE INDEX IF NOT EXISTS idx_products_public ON shop_products(active,sort_order,id);
+    CREATE INDEX IF NOT EXISTS idx_services_public ON services(active,sort_order,id);
     CREATE INDEX IF NOT EXISTS idx_sessions_expiry ON admin_sessions(expires_at);
   `.split(";").map(sql=>sql.trim()).filter(Boolean).map(sql=>env.DB.prepare(sql)));
   try{await env.DB.prepare("SELECT username FROM admin_sessions LIMIT 1").first()}catch{try{await env.DB.exec("ALTER TABLE admin_sessions ADD COLUMN username TEXT NOT NULL DEFAULT 'Nicole';")}catch{}}
+  const seeded=await env.DB.prepare("SELECT value FROM app_meta WHERE key='cms_seeded_v1'").first();
+  if(!seeded){
+    const statements=DEFAULT_SERVICES.map(s=>env.DB.prepare("INSERT INTO services(title,description,detail_text,price_cents,compare_at_cents,image_url,image_alt,sort_order) VALUES(?,?,?,?,?,?,?,?)").bind(...s));
+    for(const [key,value] of Object.entries(DEFAULT_CONTENT))statements.push(env.DB.prepare("INSERT OR IGNORE INTO site_content(key,value) VALUES(?,?)").bind(key,value));
+    statements.push(env.DB.prepare("INSERT INTO app_meta(key,value) VALUES('cms_seeded_v1','1')"));
+    await env.DB.batch(statements);
+  }
   readyDatabases.add(env.DB);
 }
 
@@ -67,8 +92,10 @@ async function recordFailedLogin(env,state){const now=new Date();let attempts=1,
 async function clearFailedLogin(env,id){await env.DB.prepare("DELETE FROM login_attempts WHERE identity_hash=?").bind(id).run()}
 async function bodyJson(req){try{return await req.json()}catch{return{}}}
 
-async function publicState(env){if(!env.DB)return json({ok:true,configured:false,promotions:[],products:[]},200,{"cache-control":"public, max-age=15"});await ensureSchema(env);const [promos,products]=await Promise.all([env.DB.prepare("SELECT id,badge,title,text,button_label,button_url,sort_order FROM promotions WHERE active=1 AND (starts_at IS NULL OR starts_at<=?) AND (ends_at IS NULL OR ends_at>=?) ORDER BY sort_order ASC,id DESC").bind(nowIso(),nowIso()).all(),env.DB.prepare("SELECT id,title,description,price_cents,compare_at_cents,image_key,image_alt,sort_order FROM shop_products WHERE active=1 ORDER BY sort_order ASC,id DESC").all()]);return json({ok:true,configured:true,promotions:promos.results||[],products:(products.results||[]).map(p=>({...p,image_url:p.image_key?`/media/${encodeURIComponent(p.image_key).replace(/%2F/g,"/")}`:""}))},200,{"cache-control":"public, max-age=30, stale-while-revalidate=120"})}
-async function adminState(env,username){const [promotions,products,media,status]=await Promise.all([env.DB.prepare("SELECT * FROM promotions ORDER BY sort_order ASC,id DESC").all(),env.DB.prepare("SELECT * FROM shop_products ORDER BY sort_order ASC,id DESC").all(),env.DB.prepare("SELECT * FROM media ORDER BY id DESC LIMIT 200").all(),bindingStatus(env)]);return json({ok:true,user:username,system:status,promotions:promotions.results||[],products:(products.results||[]).map(p=>({...p,image_url:p.image_key?`/media/${encodeURIComponent(p.image_key).replace(/%2F/g,"/")}`:""})),media:(media.results||[]).map(m=>({...m,url:`/media/${encodeURIComponent(m.object_key).replace(/%2F/g,"/")}`}))})}
+const withImage=item=>({...item,image_url:item.image_key?`/media/${encodeURIComponent(item.image_key).replace(/%2F/g,"/")}`:(item.image_url||"")});
+const contentObject=rows=>Object.fromEntries((rows||[]).map(row=>[row.key,row.value]));
+async function publicState(env){if(!env.DB)return json({ok:true,configured:false,promotions:[],products:[],services:[],content:{}},200,{"cache-control":"public, max-age=15"});await ensureSchema(env);const [promos,products,services,content]=await Promise.all([env.DB.prepare("SELECT id,badge,title,text,button_label,button_url,sort_order FROM promotions WHERE active=1 AND (starts_at IS NULL OR starts_at<=?) AND (ends_at IS NULL OR ends_at>=?) ORDER BY sort_order ASC,id DESC").bind(nowIso(),nowIso()).all(),env.DB.prepare("SELECT id,title,description,price_cents,compare_at_cents,image_key,image_alt,sort_order FROM shop_products WHERE active=1 ORDER BY sort_order ASC,id DESC").all(),env.DB.prepare("SELECT id,title,description,detail_text,price_cents,compare_at_cents,image_key,image_url,image_alt,sort_order FROM services WHERE active=1 ORDER BY sort_order ASC,id ASC").all(),env.DB.prepare("SELECT key,value FROM site_content").all()]);return json({ok:true,configured:true,promotions:promos.results||[],products:(products.results||[]).map(withImage),services:(services.results||[]).map(withImage),content:contentObject(content.results)},200,{"cache-control":"public, max-age=30, stale-while-revalidate=120"})}
+async function adminState(env,username){const [promotions,products,services,content,media,status]=await Promise.all([env.DB.prepare("SELECT * FROM promotions ORDER BY sort_order ASC,id DESC").all(),env.DB.prepare("SELECT * FROM shop_products ORDER BY sort_order ASC,id DESC").all(),env.DB.prepare("SELECT * FROM services ORDER BY sort_order ASC,id ASC").all(),env.DB.prepare("SELECT key,value FROM site_content").all(),env.DB.prepare("SELECT * FROM media ORDER BY id DESC LIMIT 200").all(),bindingStatus(env)]);return json({ok:true,user:username,system:status,promotions:promotions.results||[],products:(products.results||[]).map(withImage),services:(services.results||[]).map(withImage),content:contentObject(content.results),media:(media.results||[]).map(m=>({...m,url:`/media/${encodeURIComponent(m.object_key).replace(/%2F/g,"/")}`}))})}
 
 async function createPromotion(env,req){const b=await bodyJson(req),title=clean(b.title,140);if(!title)return json({ok:false,error:"Titel fehlt"},400);const r=await env.DB.prepare("INSERT INTO promotions(badge,title,text,button_label,button_url,active,sort_order,starts_at,ends_at,updated_at) VALUES(?,?,?,?,?,?,?,?,?,?)").bind(clean(b.badge||"ANGEBOT",40),title,clean(b.text,500),clean(b.button_label,60),safeUrl(b.button_url),boolInt(b.active??true),int(b.sort_order),nullableIso(b.starts_at),nullableIso(b.ends_at),nowIso()).run();return json({ok:true,id:r.meta.last_row_id})}
 async function updatePromotion(env,req,id){const b=await bodyJson(req),title=clean(b.title,140);if(!title)return json({ok:false,error:"Titel fehlt"},400);await env.DB.prepare("UPDATE promotions SET badge=?,title=?,text=?,button_label=?,button_url=?,active=?,sort_order=?,starts_at=?,ends_at=?,updated_at=? WHERE id=?").bind(clean(b.badge||"ANGEBOT",40),title,clean(b.text,500),clean(b.button_label,60),safeUrl(b.button_url),boolInt(b.active),int(b.sort_order),nullableIso(b.starts_at),nullableIso(b.ends_at),nowIso(),id).run();return json({ok:true})}
@@ -77,6 +104,11 @@ function productPayload(b){return{title:clean(b.title,160),description:clean(b.d
 async function createProduct(env,req){const p=productPayload(await bodyJson(req));if(!p.title)return json({ok:false,error:"Produktname fehlt"},400);const r=await env.DB.prepare("INSERT INTO shop_products(title,description,price_cents,compare_at_cents,image_key,image_alt,active,sort_order,updated_at) VALUES(?,?,?,?,?,?,?,?,?)").bind(p.title,p.description,p.price_cents,p.compare_at_cents,p.image_key,p.image_alt,p.active,p.sort_order,nowIso()).run();return json({ok:true,id:r.meta.last_row_id})}
 async function updateProduct(env,req,id){const p=productPayload(await bodyJson(req));if(!p.title)return json({ok:false,error:"Produktname fehlt"},400);await env.DB.prepare("UPDATE shop_products SET title=?,description=?,price_cents=?,compare_at_cents=?,image_key=?,image_alt=?,active=?,sort_order=?,updated_at=? WHERE id=?").bind(p.title,p.description,p.price_cents,p.compare_at_cents,p.image_key,p.image_alt,p.active,p.sort_order,nowIso(),id).run();return json({ok:true})}
 async function deleteProduct(env,id){await env.DB.prepare("DELETE FROM shop_products WHERE id=?").bind(id).run();return json({ok:true})}
+function servicePayload(b){return{title:clean(b.title,160),description:clean(b.description,1200),detail_text:clean(b.detail_text,2400),price_cents:Math.max(0,int(b.price_cents)),compare_at_cents:b.compare_at_cents===null||b.compare_at_cents===""?null:Math.max(0,int(b.compare_at_cents)),image_key:clean(b.image_key,500)||null,image_url:safeUrl(b.image_url),image_alt:clean(b.image_alt,180),active:boolInt(b.active??true),sort_order:int(b.sort_order)}}
+async function createService(env,req){const p=servicePayload(await bodyJson(req));if(!p.title)return json({ok:false,error:"Name der Leistung fehlt"},400);const r=await env.DB.prepare("INSERT INTO services(title,description,detail_text,price_cents,compare_at_cents,image_key,image_url,image_alt,active,sort_order,updated_at) VALUES(?,?,?,?,?,?,?,?,?,?,?)").bind(p.title,p.description,p.detail_text,p.price_cents,p.compare_at_cents,p.image_key,p.image_url,p.image_alt,p.active,p.sort_order,nowIso()).run();return json({ok:true,id:r.meta.last_row_id})}
+async function updateService(env,req,id){const p=servicePayload(await bodyJson(req));if(!p.title)return json({ok:false,error:"Name der Leistung fehlt"},400);await env.DB.prepare("UPDATE services SET title=?,description=?,detail_text=?,price_cents=?,compare_at_cents=?,image_key=?,image_url=?,image_alt=?,active=?,sort_order=?,updated_at=? WHERE id=?").bind(p.title,p.description,p.detail_text,p.price_cents,p.compare_at_cents,p.image_key,p.image_url,p.image_alt,p.active,p.sort_order,nowIso(),id).run();return json({ok:true})}
+async function deleteService(env,id){await env.DB.prepare("DELETE FROM services WHERE id=?").bind(id).run();return json({ok:true})}
+async function updateContent(env,req){const body=await bodyJson(req),statements=[];for(const key of Object.keys(DEFAULT_CONTENT)){if(Object.hasOwn(body,key))statements.push(env.DB.prepare("INSERT INTO site_content(key,value,updated_at) VALUES(?,?,?) ON CONFLICT(key) DO UPDATE SET value=excluded.value,updated_at=excluded.updated_at").bind(key,clean(body[key],key.endsWith('_text')?2400:220),nowIso()))}if(statements.length)await env.DB.batch(statements);return json({ok:true})}
 async function uploadMedia(env,req){
   const miss=await requireMedia(env);if(miss)return miss;
   if(Number(req.headers.get("content-length"))>MAX_UPLOAD+65536)return json({ok:false,error:"Das optimierte Bild darf maximal 1 MB groß sein."},413);
@@ -96,8 +128,8 @@ async function deleteMedia(env,id){
   const miss=await requireMedia(env);if(miss)return miss;
   const row=await env.DB.prepare("SELECT object_key FROM media WHERE id=?").bind(id).first();
   if(!row)return json({ok:false,error:"Medium nicht gefunden"},404);
-  const used=await env.DB.prepare("SELECT COUNT(*) AS c FROM shop_products WHERE image_key=?").bind(row.object_key).first();
-  if(int(used?.c)>0)return json({ok:false,error:"Dieses Bild wird noch von einem Shop-Produkt verwendet."},409);
+  const [usedProducts,usedServices]=await Promise.all([env.DB.prepare("SELECT COUNT(*) AS c FROM shop_products WHERE image_key=?").bind(row.object_key).first(),env.DB.prepare("SELECT COUNT(*) AS c FROM services WHERE image_key=?").bind(row.object_key).first()]);
+  if(int(usedProducts?.c)+int(usedServices?.c)>0)return json({ok:false,error:"Dieses Bild wird noch von einem Produkt oder einer Leistung verwendet."},409);
   await env.DB.batch([
     env.DB.prepare("DELETE FROM media_files WHERE object_key=?").bind(row.object_key),
     env.DB.prepare("DELETE FROM media WHERE id=?").bind(id)
@@ -133,8 +165,13 @@ export async function onRequest(context){
     if(area==="products"&&method==="POST")return await createProduct(env,request);
     if(area==="products"&&method==="PUT"&&id)return await updateProduct(env,request,id);
     if(area==="products"&&method==="DELETE"&&id)return await deleteProduct(env,id);
+    if(area==="services"&&method==="POST")return await createService(env,request);
+    if(area==="services"&&method==="PUT"&&id)return await updateService(env,request,id);
+    if(area==="services"&&method==="DELETE"&&id)return await deleteService(env,id);
+    if(area==="content"&&method==="PUT")return await updateContent(env,request);
     if(area==="media"&&method==="POST")return await uploadMedia(env,request);
     if(area==="media"&&method==="DELETE"&&id)return await deleteMedia(env,id);
     return json({ok:false,error:"Admin-Endpunkt nicht gefunden"},404);
   }catch(error){console.error("Plant Guide API",error);return json({ok:false,error:"Cloudflare-Verbindung fehlgeschlagen. Bitte Systemstatus prüfen."},500)}
 }
+
