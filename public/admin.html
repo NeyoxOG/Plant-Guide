@@ -7,7 +7,8 @@
   <meta name="theme-color" content="#153f20">
   <title>Plant Guide · Admin</title>
   <link rel="stylesheet" href="admin.css?v=20260908-login-2">
-  <script defer src="admin.js?v=20260908-login-2"></script>
+  <link rel="stylesheet" href="admin-fix.css?v=20260908-stable-1">
+  <script defer src="admin-v2.js?v=20260908-stable-1"></script>
 </head>
 <body>
   <div class="admin-bg" aria-hidden="true"><span></span><span></span><span></span></div>
@@ -27,6 +28,8 @@
         <button class="primary" type="submit">Einloggen <span>→</span></button>
       </form>
       <p class="status" id="loginStatus" aria-live="polite"></p>
+      <p class="login-system" id="loginSystem">Cloudflare-Verbindung wird geprüft …</p>
+      <button class="connection-retry" id="connectionRetry" type="button">Verbindung erneut prüfen</button>
       <a class="back-link" href="/">← Zur Website</a>
     </section>
   </main>
@@ -44,11 +47,19 @@
     </aside>
 
     <div class="admin-main">
-      <header class="topbar"><button class="mobile-nav-toggle" id="mobileNavToggle">☰</button><div><p class="kicker">PLANT GUIDE</p><h1 id="viewTitle">Übersicht</h1></div><div class="top-actions"><span class="live-dot"></span><span>Cloudflare CMS</span></div></header>
+      <header class="topbar">
+        <button class="mobile-nav-toggle" id="mobileNavToggle">☰</button>
+        <div><p class="kicker">PLANT GUIDE</p><h1 id="viewTitle">Übersicht</h1></div>
+        <div class="top-actions" id="connectionBadge"><span class="live-dot" id="connectionDot"></span><span id="connectionLabel">Cloudflare wird geprüft</span></div>
+      </header>
 
       <section class="view active" data-panel="overview">
         <div class="welcome-panel"><div><p class="kicker">INHALTE VERWALTEN</p><h2>Alles an einem Ort.</h2><p>Aktuelle Angebote erscheinen automatisch oben auf der Website. Shop-Produkte und Bilder können ohne neuen Code gepflegt werden.</p></div><div class="welcome-orb">❧</div></div>
         <div class="stats"><article><span>Aktive Angebote</span><strong id="statPromos">0</strong></article><article><span>Shop-Produkte</span><strong id="statProducts">0</strong></article><article><span>Medien</span><strong id="statMedia">0</strong></article></div>
+        <div class="system-panel">
+          <div class="system-panel-head"><div><h3>Cloudflare Systemstatus</h3><p>Die Verbindung wird direkt gegen die aktiven Pages Functions geprüft.</p></div><button class="connection-retry" id="connectionRetryDashboard" type="button">Neu prüfen</button></div>
+          <div class="system-grid"><div class="system-item" id="systemDb"><i></i><span><strong>D1</strong><small>Wird geprüft</small></span></div><div class="system-item" id="systemMedia"><i></i><span><strong>R2</strong><small>Wird geprüft</small></span></div><div class="system-item" id="systemAuth"><i></i><span><strong>Login</strong><small>Wird geprüft</small></span></div></div>
+        </div>
         <div class="quick-grid"><button data-quick="promotion"><b>＋</b><span><strong>Neues Angebot</strong><small>Banner oben auf der Website</small></span></button><button data-quick="product"><b>＋</b><span><strong>Neues Produkt</strong><small>Preis, Bild & Beschreibung</small></span></button><button data-quick="media"><b>↑</b><span><strong>Bild hochladen</strong><small>JPG, PNG, WebP, AVIF</small></span></button></div>
       </section>
 
@@ -101,5 +112,8 @@
   </div>
 
   <div class="toast" id="toast" hidden></div>
+  <script>
+    document.getElementById('connectionRetryDashboard')?.addEventListener('click',()=>document.getElementById('connectionRetry')?.click());
+  </script>
 </body>
 </html>

@@ -1,0 +1,35 @@
+name: Smoke Test Live Cloudflare
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  smoke:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Wait for Cloudflare Pages and verify CMS
+        shell: bash
+        run: |
+          set -euo pipefail
+          BASE='https://plant-guideeh.pages.dev'
+          ok=0
+          for i in $(seq 1 18); do
+            if curl -fsS --max-time 10 "$BASE/api/health" -o health.json; then
+              if node -e "const fs=require('fs');const h=JSON.parse(fs.readFileSync('health.json','utf8'));process.exit(h.ok&&h.db?.ready&&h.media?.ready&&h.auth?.ready&&h.ready?0:1)"; then
+                ok=1
+                break
+              fi
+            fi
+            echo "Cloudflare CMS noch nicht vollständig bereit – Versuch $i/18"
+            sleep 10
+          done
+          cat health.json 2>/dev/null || true
+          test "$ok" = 1
+          curl -fsS --max-time 10 "$BASE/" >/dev/null
+          curl -fsS --max-time 10 "$BASE/admin.html" >/dev/null
+          curl -fsS --max-time 10 "$BASE/api/public" | node -e "let d='';process.stdin.on('data',c=>d+=c).on('end',()=>{const j=JSON.parse(d);if(!j.ok)process.exit(1)})"
