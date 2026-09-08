@@ -38,6 +38,22 @@ CREATE TABLE IF NOT EXISTS shop_products (
   updated_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP
 );
 
+CREATE TABLE IF NOT EXISTS admin_users (
+  id INTEGER PRIMARY KEY AUTOINCREMENT,
+  username TEXT NOT NULL UNIQUE COLLATE NOCASE,
+  password_hash TEXT NOT NULL,
+  password_salt TEXT NOT NULL,
+  password_iterations INTEGER NOT NULL DEFAULT 210000,
+  active INTEGER NOT NULL DEFAULT 1 CHECK (active IN (0,1)),
+  created_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  updated_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP
+);
+
+-- Initiale Administratorin. Das Passwort selbst wird nicht im Repository gespeichert,
+-- sondern nur als PBKDF2-SHA256-Hash mit individuellem Salt.
+INSERT OR IGNORE INTO admin_users(username,password_hash,password_salt,password_iterations,active)
+VALUES('Nicole','pw4/QFBmUGnpayFB43To1zsTAlYReOznFB6Uw/SOmUA=','SC6wltYf40X1IuxXpcDHmQ==',210000,1);
+
 CREATE TABLE IF NOT EXISTS admin_sessions (
   token_hash TEXT PRIMARY KEY,
   expires_at TEXT NOT NULL,
@@ -53,4 +69,5 @@ CREATE TABLE IF NOT EXISTS login_attempts (
 
 CREATE INDEX IF NOT EXISTS idx_promotions_public ON promotions(active, sort_order, id);
 CREATE INDEX IF NOT EXISTS idx_products_public ON shop_products(active, sort_order, id);
+CREATE INDEX IF NOT EXISTS idx_admin_users_username ON admin_users(username);
 CREATE INDEX IF NOT EXISTS idx_sessions_expiry ON admin_sessions(expires_at);
