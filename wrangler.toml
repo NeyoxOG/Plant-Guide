@@ -1,9 +1,13 @@
 name = "plant-guideeh"
-compatibility_date = "2026-08-29"
+compatibility_date = "2026-09-08"
 pages_build_output_dir = "./public"
 
-# Cloudflare Pages Functions use the bindings below.
-# Create the resources once, then paste the D1 database id and uncomment the blocks.
+# Public, non-sensitive configuration.
+[vars]
+ADMIN_USERNAME = "Nicole"
+
+# Cloudflare Pages Functions require the following production bindings.
+# D1 database ID must be filled in once the database exists.
 #
 # [[d1_databases]]
 # binding = "DB"
@@ -13,3 +17,6 @@ pages_build_output_dir = "./public"
 # [[r2_buckets]]
 # binding = "MEDIA"
 # bucket_name = "plant-guide-media"
+#
+# Secret (never commit the value):
+# npx wrangler pages secret put ADMIN_PASSWORD --project-name plant-guideeh
