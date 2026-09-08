@@ -50,6 +50,6 @@ $('#promotionForm').onsubmit=async e=>{e.preventDefault();const f=e.currentTarge
 $('#productForm').onsubmit=e=>saveCatalog('product',e);$('#serviceForm').onsubmit=e=>saveCatalog('service',e);
 $('#contentForm').onsubmit=async e=>{e.preventDefault();const p={};for(const key of CONTENT_KEYS)p[key]=e.currentTarget.elements[key].value;try{await api('/api/admin/content',{method:'PUT',body:JSON.stringify(p)});toast('Seitentexte gespeichert');await loadState()}catch(err){toast(err.message,true)}};
 addEventListener('keydown',e=>{if(e.key==='Escape')closeSheets()});
-(async()=>{const h=await checkHealth();if(h.db?.ready&&h.auth?.ready)await loadState();else showLogin(connectionMessage(h))})();
+(async()=>{const h=await checkHealth();if(h.db?.ready&&h.auth?.ready)await loadState();else showLogin()})();
 })();
 

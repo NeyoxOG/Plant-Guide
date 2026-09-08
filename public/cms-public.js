@@ -31,7 +31,7 @@
     for(const nav of [document.querySelector('.desktop-nav'),document.querySelector('.mobile-menu')])if(nav&&!nav.querySelector('a[href="#shop"]')){const contact=nav.querySelector('a[href="#kontakt"]'),link=el('a','','Shop');link.href='#shop';nav.insertBefore(link,contact||null)}
   }
 
-  async function load(){const controller=new AbortController(),timer=setTimeout(()=>controller.abort(),7000);try{const res=await fetch('/api/public',{headers:{accept:'application/json'},signal:controller.signal});if(!res.ok)return;const data=await res.json();if(!data?.ok)return;applyContent(data.content);renderPromotions(data.promotions||[]);renderServices(data.services);renderShop(data.products||[])}catch(err){console.info('Plant Guide CMS ist vorübergehend nicht erreichbar.',err)}finally{clearTimeout(timer)}}
+  async function load(){const controller=new AbortController(),timer=setTimeout(()=>controller.abort(),7000);try{const res=await fetch('/api/public',{headers:{accept:'application/json'},signal:controller.signal});if(!res.ok)return;const data=await res.json();if(!data?.ok)return;applyContent(data.content);renderPromotions(data.promotions||[]);if(data.configured)renderServices(data.services);renderShop(data.products||[])}catch(err){console.info('Plant Guide CMS ist vorübergehend nicht erreichbar.',err)}finally{clearTimeout(timer)}}
   if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',load,{once:true});else load();
 })();
 
