@@ -1,35 +1,46 @@
 # Plant Guide · Cloudflare CMS
 
-Diese Version verwendet bewusst die klassische Cloudflare-Pages-Struktur:
+Cloudflare-Pages-CMS für die Plant-Guide-Website.
 
 ```text
-public/        # komplette öffentliche Website + Admin-Oberfläche
-functions/     # Pages Functions API
-schema.sql     # D1 Datenbankschema
+public/        # öffentliche Website + Admin-Oberfläche
+functions/     # Cloudflare Pages Functions
+schema.sql     # Referenzschema für D1
 wrangler.toml  # Pages-Konfiguration
-.gitignore
-README.md
+.github/       # automatische Syntax- und Live-Smoke-Tests
 ```
 
-## Funktionen
+## Enthaltene Funktionen
 
-- sichtbarer `Admin Login` ganz unten auf der öffentlichen Website
-- Admin-Login unter `/admin.html`
-- Benutzername + Passwort statt reinem Passwort-Login
+- sichtbarer `Admin Login` unten auf der Website
+- Login mit Benutzername `Nicole` + Cloudflare-Secret-Passwort
 - Angebote/Hinweise erstellen, bearbeiten, aktivieren und löschen
-- aktive Angebote werden automatisch oberhalb der Website-Inhalte angezeigt
+- aktive Angebote automatisch auf der öffentlichen Website
 - Shop-Produkte erstellen, bearbeiten und löschen
 - aktueller Preis + optionaler Vergleichspreis
 - Produktbeschreibung, Reihenfolge und Sichtbarkeit
-- Medienbibliothek mit Bild-Upload über Cloudflare R2
-- Produktbilder direkt aus der Mediathek auswählen
-- D1 für Admin-Benutzer, Inhalte, Login-Sitzungen und Schutz vor Login-Bruteforce
-- HttpOnly/Secure/SameSite-Session-Cookie
-- bestehendes Plant-Guide-Design, Animationen und responsive Darstellung bleiben erhalten
+- Medienbibliothek mit Bild-Upload zu Cloudflare R2
+- Produktbilder aus der Mediathek auswählen
+- serverseitige Sessions in D1
+- Login-Rate-Limit
+- Live-Systemstatus für D1, R2 und Login-Konfiguration
+- Upload-Timeouts und saubere Fehlerrücksetzung statt endlosem Ladezustand
+- automatische D1-Tabellenerstellung beim ersten API-Zugriff
+- GitHub-Syntaxprüfung und Live-Smoke-Test gegen `plant-guideeh.pages.dev`
 
-## 1. Cloudflare Ressourcen einmalig erstellen
+## Cloudflare-Ressourcen
 
-Im Repository-Verzeichnis mit installiertem Node.js:
+Die Anwendung braucht genau zwei Bindings:
+
+- `DB` → D1-Datenbank `plant-guide-db`
+- `MEDIA` → R2-Bucket `plant-guide-media`
+
+Zusätzlich:
+
+- `ADMIN_USERNAME` ist in `wrangler.toml` auf `Nicole` gesetzt.
+- `ADMIN_PASSWORD` muss als Cloudflare Pages Secret gesetzt werden und darf niemals ins Repository geschrieben werden.
+
+### Ressourcen anlegen
 
 ```bash
 npx wrangler login
@@ -37,58 +48,73 @@ npx wrangler d1 create plant-guide-db
 npx wrangler r2 bucket create plant-guide-media
 ```
 
-Beim D1-Befehl wird eine `database_id` ausgegeben. Diese ID in `wrangler.toml` eintragen und dort die beiden auskommentierten Binding-Blöcke für `DB` und `MEDIA` aktivieren.
+Die von D1 ausgegebene `database_id` in `wrangler.toml` eintragen und die D1-/R2-Blöcke aktivieren.
 
-Die Binding-Namen müssen exakt lauten:
+### Admin-Passwort setzen
 
-- D1: `DB`
-- R2: `MEDIA`
+```bash
+npx wrangler pages secret put ADMIN_PASSWORD --project-name plant-guideeh
+```
 
-## 2. Datenbank initialisieren
+Wrangler fragt den Secret-Wert verdeckt ab.
+
+## Datenbank
+
+Die Pages Function initialisiert die benötigten Tabellen automatisch, sobald `DB` korrekt gebunden ist. `schema.sql` bleibt zusätzlich als nachvollziehbare Referenz und kann bei Bedarf manuell ausgeführt werden:
 
 ```bash
 npx wrangler d1 execute plant-guide-db --remote --file=schema.sql
 ```
 
-`schema.sql` legt Tabellen für Angebote, Produkte, Medien, Sitzungen und Admin-Benutzer an. Der initiale Admin-Benutzer `Nicole` wird dabei automatisch angelegt. Das von der Besitzerin festgelegte Passwort liegt **nicht im Klartext** im Repository, sondern nur als PBKDF2-SHA256-Hash mit individuellem Salt.
+Es werden keine Passwort-Hashes oder produktiven Zugangsdaten in Git gespeichert.
 
-Der Befehl kann erneut ausgeführt werden, weil die Tabellen und der initiale Benutzer idempotent angelegt werden.
+## Deploy
 
-## 3. Deploy
-
-Da `wrangler.toml` `public/` als Build-Ausgabe definiert, reicht anschließend:
+Mit GitHub-Integration deployt Cloudflare Änderungen aus `main` automatisch. Ein manueller Deploy ist ebenfalls möglich:
 
 ```bash
 npx wrangler pages deploy public --project-name plant-guideeh --branch main
 ```
 
-Bei GitHub-Integration kann Cloudflare `main` weiterhin automatisch deployen. Wichtig ist dann, dass dieselben D1-/R2-Bindings (`DB` und `MEDIA`) auch im Pages-Projekt gesetzt sind.
-
-## Admin
-
-Nach erfolgreicher Einrichtung entweder unten auf der Website auf `Admin Login` klicken oder direkt öffnen:
+Danach:
 
 ```text
-https://plant-guideeh.pages.dev/admin.html
+Website: https://plant-guideeh.pages.dev/
+Admin:   https://plant-guideeh.pages.dev/admin.html
+Health:  https://plant-guideeh.pages.dev/api/health
 ```
 
-Benutzername des initialen Kontos:
+## Systemstatus
 
-```text
-Nicole
-```
+`/api/health` prüft getrennt:
+
+- ob D1 gebunden und erreichbar ist
+- ob R2 gebunden und erreichbar ist
+- ob das Admin-Passwort als Secret vorhanden ist
+
+Der Adminbereich zeigt denselben Status sichtbar an und deaktiviert Medien-Uploads, solange R2 nicht bereit ist.
+
+## Automatische Prüfungen
+
+`.github/workflows/verify.yml` prüft bei Änderungen:
+
+- JavaScript-Syntax
+- notwendige Dateien und Admin-Login-Felder
+- Wrangler-Grundkonfiguration
+- dass das produktive Passwort nicht versehentlich in Git landet
+
+`.github/workflows/live-smoke.yml` prüft nach einem Push auf `main` die Live-Seite und erwartet, dass D1, R2 und Login vollständig bereit sind.
 
 ## Sicherheit
 
-- Admin-Passwort wird nicht im Klartext gespeichert
-- PBKDF2-SHA256 mit individuellem Salt und 210.000 Iterationen
-- Admin-Sitzungen serverseitig in D1
-- Cookie: `HttpOnly`, `Secure`, `SameSite=Strict`
-- Login-Rate-Limit nach wiederholten Fehlversuchen
-- Schreibzugriffe benötigen eine gültige Sitzung und Same-Origin-Header
-- Uploads akzeptieren nur Bilder und sind auf 8 MB begrenzt
+- Passwort ausschließlich als Cloudflare Secret
+- `HttpOnly; Secure; SameSite=Strict` Session-Cookie
+- serverseitige Sessions in D1
+- Rate-Limit nach wiederholten Fehlversuchen
+- schreibende Admin-Anfragen benötigen eine gültige Sitzung und einen zusätzlichen Request-Header
+- Uploads sind auf Bildformate und 8 MB begrenzt
 - R2 bleibt privat; Medien werden kontrolliert über `/media/*` ausgeliefert
 
-## Hinweis
+## Rechtliches
 
-Impressum und Datenschutz müssen vor dem endgültigen Livegang weiterhin mit vollständiger Anschrift sowie den tatsächlich eingesetzten Hosting-/Drittanbieterangaben geprüft und ergänzt werden.
+Impressum und Datenschutz müssen vor dem endgültigen Livegang weiterhin mit vollständiger Anschrift sowie den tatsächlich eingesetzten Hosting-/Drittanbieterangaben geprüft werden.
