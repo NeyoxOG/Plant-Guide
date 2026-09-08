@@ -15,14 +15,21 @@ if('IntersectionObserver' in window){
   reveals.forEach(el=>io.observe(el));
 }else reveals.forEach(el=>el.classList.add('is-visible'));
 
-const sections=qsa('main section[id]');
-const navLinks=qsa('.desktop-nav a');
-if('IntersectionObserver' in window){
-  const sectionIO=new IntersectionObserver(entries=>entries.forEach(e=>{
-    if(e.isIntersecting){navLinks.forEach(a=>a.classList.toggle('active',a.getAttribute('href')===`#${e.target.id}`));}
-  }),{threshold:.35});
-  sections.forEach(s=>sectionIO.observe(s));
+// Follow the section at the reading position, including CMS-added shop content.
+let navTicking=false;
+function updateNavigation(){
+  const sections=qsa('main section[id]');
+  const current=sections.filter(s=>s.getBoundingClientRect().top<=150).at(-1)||sections[0];
+  qsa('.desktop-nav a,.mobile-menu a').forEach(a=>{
+    const active=a.getAttribute('href')===`#${current?.id}`;
+    a.classList.toggle('active',active);
+    if(active)a.setAttribute('aria-current','location');else a.removeAttribute('aria-current');
+  });
+  navTicking=false;
 }
+addEventListener('scroll',()=>{if(!navTicking){navTicking=true;requestAnimationFrame(updateNavigation)}},{passive:true});
+addEventListener('resize',updateNavigation);
+updateNavigation();
 
 qsa('.faq-item').forEach((item,index)=>{
   const btn=qs('button',item),answer=qs('.faq-answer',item),id=`faq-answer-${index+1}`;
@@ -79,3 +86,4 @@ if(stage && !matchMedia('(prefers-reduced-motion: reduce)').matches && matchMedi
 
 addEventListener('orientationchange',()=>setTimeout(resetHorizontalScroll,120));
 const year=qs('#year'); if(year) year.textContent=new Date().getFullYear();
+
