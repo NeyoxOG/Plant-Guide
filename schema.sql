@@ -55,3 +55,5 @@ CREATE TABLE IF NOT EXISTS login_attempts (
 CREATE INDEX IF NOT EXISTS idx_promotions_public ON promotions(active, sort_order, id);
 CREATE INDEX IF NOT EXISTS idx_products_public ON shop_products(active, sort_order, id);
 CREATE INDEX IF NOT EXISTS idx_sessions_expiry ON admin_sessions(expires_at);
+
+CREATE TABLE IF NOT EXISTS media_files (object_key TEXT PRIMARY KEY, data BLOB NOT NULL);

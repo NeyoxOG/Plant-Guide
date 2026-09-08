@@ -7,8 +7,8 @@
   <meta name="theme-color" content="#153f20">
   <title>Plant Guide · Admin</title>
   <link rel="stylesheet" href="admin.css?v=20260908-login-2">
-  <link rel="stylesheet" href="admin-fix.css?v=20260908-stable-1">
-  <script defer src="admin-v2.js?v=20260908-stable-1"></script>
+  <link rel="stylesheet" href="admin-fix.css?v=20260908-d1-media-1">
+  <script defer src="admin-v2.js?v=20260908-d1-media-1"></script>
 </head>
 <body>
   <div class="admin-bg" aria-hidden="true"><span></span><span></span><span></span></div>
@@ -58,7 +58,7 @@
         <div class="stats"><article><span>Aktive Angebote</span><strong id="statPromos">0</strong></article><article><span>Shop-Produkte</span><strong id="statProducts">0</strong></article><article><span>Medien</span><strong id="statMedia">0</strong></article></div>
         <div class="system-panel">
           <div class="system-panel-head"><div><h3>Cloudflare Systemstatus</h3><p>Die Verbindung wird direkt gegen die aktiven Pages Functions geprüft.</p></div><button class="connection-retry" id="connectionRetryDashboard" type="button">Neu prüfen</button></div>
-          <div class="system-grid"><div class="system-item" id="systemDb"><i></i><span><strong>D1</strong><small>Wird geprüft</small></span></div><div class="system-item" id="systemMedia"><i></i><span><strong>R2</strong><small>Wird geprüft</small></span></div><div class="system-item" id="systemAuth"><i></i><span><strong>Login</strong><small>Wird geprüft</small></span></div></div>
+          <div class="system-grid"><div class="system-item" id="systemDb"><i></i><span><strong>D1</strong><small>Wird geprüft</small></span></div><div class="system-item" id="systemMedia"><i></i><span><strong>Bilder</strong><small>Wird geprüft</small></span></div><div class="system-item" id="systemAuth"><i></i><span><strong>Login</strong><small>Wird geprüft</small></span></div></div>
         </div>
         <div class="quick-grid"><button data-quick="promotion"><b>＋</b><span><strong>Neues Angebot</strong><small>Banner oben auf der Website</small></span></button><button data-quick="product"><b>＋</b><span><strong>Neues Produkt</strong><small>Preis, Bild & Beschreibung</small></span></button><button data-quick="media"><b>↑</b><span><strong>Bild hochladen</strong><small>JPG, PNG, WebP, AVIF</small></span></button></div>
       </section>
@@ -74,7 +74,7 @@
       </section>
 
       <section class="view" data-panel="media">
-        <div class="section-toolbar"><div><p class="kicker">MEDIATHEK</p><h2>Bilder & Medien</h2><p>Hochgeladene Bilder liegen privat in Cloudflare R2 und werden über die Website ausgeliefert.</p></div><label class="primary upload-button">↑ Bild hochladen<input id="mediaInput" type="file" accept="image/jpeg,image/png,image/webp,image/avif,image/gif" hidden></label></div>
+        <div class="section-toolbar"><div><p class="kicker">MEDIATHEK</p><h2>Bilder & Medien</h2><p>Fotos werden automatisch verkleinert und im Bildspeicher gesichert. Maximal 8 MB als Original, 1 MB nach Optimierung. Animierte Bilder werden als Standbild gespeichert.</p></div><label class="primary upload-button">↑ Bild hochladen<input id="mediaInput" type="file" accept="image/jpeg,image/png,image/webp,image/avif,image/gif" hidden></label></div>
         <div class="upload-progress" id="uploadProgress" hidden><span></span><p>Bild wird hochgeladen …</p></div>
         <div class="media-grid" id="mediaList"></div>
       </section>
