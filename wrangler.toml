@@ -5,11 +5,10 @@ pages_build_output_dir = "./public"
 [vars]
 ADMIN_USERNAME = "Nicole"
 
-# node deploy.mjs creates/reuses the free D1 database and fills this binding.
-# [[d1_databases]]
-# binding = "DB"
-# database_name = "plant-guide-db"
-# database_id = "SET_BY_DEPLOY"
+[[d1_databases]]
+binding = "DB"
+database_name = "plant-guide-db"
+database_id = "b10b7825-cfc0-4aca-a597-23c4a069adc5"
 
 # No production database access from preview deployments.
 [env.preview]

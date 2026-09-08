@@ -9,7 +9,7 @@
   <link rel="stylesheet" href="admin.css?v=20260908-login-2">
   <link rel="stylesheet" href="admin-fix.css?v=20260908-d1-media-1">
   <script defer src="admin-v2.js?v=20260908-d1-media-1"></script>
-</head>
+<link rel="stylesheet" href="usability.css?v=1"><script defer src="usability.js?v=1"></script></head>
 <body>
   <div class="admin-bg" aria-hidden="true"><span></span><span></span><span></span></div>
 
@@ -48,7 +48,7 @@
 
     <div class="admin-main">
       <header class="topbar">
-        <button class="mobile-nav-toggle" id="mobileNavToggle">☰</button>
+        <button class="mobile-nav-toggle" id="mobileNavToggle" aria-label="Admin-Menü öffnen" aria-expanded="false">☰</button>
         <div><p class="kicker">PLANT GUIDE</p><h1 id="viewTitle">Übersicht</h1></div>
         <div class="top-actions" id="connectionBadge"><span class="live-dot" id="connectionDot"></span><span id="connectionLabel">Cloudflare wird geprüft</span></div>
       </header>
@@ -84,7 +84,7 @@
   <div class="sheet" id="promotionSheet" hidden>
     <div class="sheet-backdrop" data-close-sheet></div>
     <form class="sheet-card" id="promotionForm">
-      <div class="sheet-head"><div><p class="kicker">ANGEBOT</p><h2 id="promotionHeading">Neues Angebot</h2></div><button type="button" class="close" data-close-sheet>×</button></div>
+      <div class="sheet-head"><div><p class="kicker">ANGEBOT</p><h2 id="promotionHeading">Neues Angebot</h2></div><button type="button" class="close" aria-label="Schließen" data-close-sheet>×</button></div>
       <input type="hidden" name="id">
       <div class="form-grid"><label>Badge<input name="badge" maxlength="40" value="ANGEBOT" placeholder="z. B. NEU"></label><label>Reihenfolge<input name="sort_order" type="number" value="0"></label></div>
       <label>Titel<input name="title" maxlength="140" required placeholder="z. B. Herbst-Angebot"></label>
@@ -99,11 +99,11 @@
   <div class="sheet" id="productSheet" hidden>
     <div class="sheet-backdrop" data-close-sheet></div>
     <form class="sheet-card wide" id="productForm">
-      <div class="sheet-head"><div><p class="kicker">SHOP</p><h2 id="productHeading">Neues Produkt</h2></div><button type="button" class="close" data-close-sheet>×</button></div>
+      <div class="sheet-head"><div><p class="kicker">SHOP</p><h2 id="productHeading">Neues Produkt</h2></div><button type="button" class="close" aria-label="Schließen" data-close-sheet>×</button></div>
       <input type="hidden" name="id">
       <label>Produktname<input name="title" maxlength="160" required placeholder="Produktname"></label>
       <label>Beschreibung<textarea name="description" rows="4" maxlength="1200" placeholder="Kurze Beschreibung für den Shop"></textarea></label>
-      <div class="form-grid"><label>Preis in €<input name="price" inputmode="decimal" required placeholder="29,90"></label><label>Alter Preis optional<input name="compare_price" inputmode="decimal" placeholder="39,90"></label></div>
+      <div class="form-grid"><label>Preis in €<input name="price" pattern="[0-9]+([,.][0-9]{1,2})?" title="Preis als Zahl, z. B. 19,90" inputmode="decimal" required placeholder="29,90"></label><label>Alter Preis optional<input name="compare_price" pattern="[0-9]+([,.][0-9]{1,2})?" title="Preis als Zahl, z. B. 29,90" inputmode="decimal" placeholder="39,90"></label></div>
       <div class="form-grid"><label>Reihenfolge<input name="sort_order" type="number" value="0"></label><label>Bildbeschreibung<input name="image_alt" maxlength="180" placeholder="Was ist auf dem Bild zu sehen?"></label></div>
       <fieldset class="media-picker"><legend>Produktbild</legend><input type="hidden" name="image_key"><div class="selected-media" id="selectedProductMedia"><span>Noch kein Bild ausgewählt</span></div><div class="mini-media-grid" id="productMediaPicker"></div></fieldset>
       <label class="switch-row"><span><strong>Aktiv</strong><small>Im öffentlichen Shop anzeigen</small></span><input name="active" type="checkbox" checked><i></i></label>

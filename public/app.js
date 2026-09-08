@@ -4,9 +4,10 @@ const menuBtn=qs('.menu-toggle'), mobileMenu=qs('.mobile-menu');
 menuBtn?.addEventListener('click',()=>{
   const open=menuBtn.getAttribute('aria-expanded')==='true';
   menuBtn.setAttribute('aria-expanded',String(!open));
+  menuBtn.setAttribute('aria-label',open?'Menü öffnen':'Menü schließen');
   mobileMenu.hidden=open;
 });
-qsa('.mobile-menu a').forEach(a=>a.addEventListener('click',()=>{mobileMenu.hidden=true;menuBtn?.setAttribute('aria-expanded','false')}));
+mobileMenu?.addEventListener('click',e=>{if(e.target.closest('a')){mobileMenu.hidden=true;menuBtn?.setAttribute('aria-expanded','false');menuBtn?.setAttribute('aria-label','Menü öffnen')}});
 
 const reveals=qsa('.reveal');
 if('IntersectionObserver' in window){
@@ -23,11 +24,15 @@ if('IntersectionObserver' in window){
   sections.forEach(s=>sectionIO.observe(s));
 }
 
-qsa('.faq-item button').forEach(btn=>btn.addEventListener('click',()=>{
-  const item=btn.closest('.faq-item'), wasOpen=item.classList.contains('open');
-  qsa('.faq-item').forEach(i=>{i.classList.remove('open');qs('button span',i).textContent='+'});
-  if(!wasOpen){item.classList.add('open');qs('button span',item).textContent='−'}
-}));
+qsa('.faq-item').forEach((item,index)=>{
+  const btn=qs('button',item),answer=qs('.faq-answer',item),id=`faq-answer-${index+1}`;
+  answer.id=id;btn.setAttribute('aria-controls',id);btn.setAttribute('aria-expanded',String(item.classList.contains('open')));
+  btn.addEventListener('click',()=>{
+    const wasOpen=item.classList.contains('open');
+    qsa('.faq-item').forEach(i=>{i.classList.remove('open');qs('button span',i).textContent='+';qs('button',i).setAttribute('aria-expanded','false')});
+    if(!wasOpen){item.classList.add('open');qs('button span',item).textContent='−';btn.setAttribute('aria-expanded','true')}
+  });
+});
 
 const serviceModal=qs('#serviceModal'), serviceTitle=qs('#serviceTitle'), serviceText=qs('#serviceText');
 const serviceCopy={
@@ -60,20 +65,10 @@ function hideModal(modal){
 qsa('[data-service]').forEach(btn=>btn.addEventListener('click',()=>{const k=btn.dataset.service;serviceTitle.textContent=k;serviceText.textContent=serviceCopy[k]||'';showModal(serviceModal)}));
 qsa('[data-close]').forEach(el=>el.addEventListener('click',()=>hideModal(serviceModal)));
 
-const reviewModal=qs('#reviewModal');
-qs('#reviewOpen')?.addEventListener('click',()=>showModal(reviewModal));
-qsa('[data-review-close]').forEach(el=>el.addEventListener('click',()=>hideModal(reviewModal)));
-qs('#reviewForm')?.addEventListener('submit',e=>{
-  e.preventDefault();
-  const data=Object.fromEntries(new FormData(e.currentTarget));
-  localStorage.setItem('plant-guide-demo-review',JSON.stringify({...data,createdAt:new Date().toISOString()}));
-  e.currentTarget.hidden=true;qs('#reviewSuccess').hidden=false;
-});
-
-addEventListener('keydown',e=>{if(e.key==='Escape'){if(serviceModal?.classList.contains('show'))hideModal(serviceModal);if(reviewModal?.classList.contains('show'))hideModal(reviewModal)}});
+addEventListener('keydown',e=>{if(e.key==='Escape'){if(serviceModal?.classList.contains('show'))hideModal(serviceModal);if(mobileMenu&&!mobileMenu.hidden){mobileMenu.hidden=true;menuBtn?.setAttribute('aria-expanded','false');menuBtn?.setAttribute('aria-label','Menü öffnen');menuBtn?.focus()}}});
 
 const stage=qs('.botanical-stage');
-if(stage && matchMedia('(pointer:fine)').matches){
+if(stage && !matchMedia('(prefers-reduced-motion: reduce)').matches && matchMedia('(pointer:fine)').matches){
   stage.addEventListener('pointermove',e=>{
     const r=stage.getBoundingClientRect(), x=(e.clientX-r.left)/r.width-.5, y=(e.clientY-r.top)/r.height-.5;
     qsa('.leaf-cluster',stage).forEach((el,i)=>el.style.translate=`${x*(i?10:-12)}px ${y*(i?10:-8)}px`);
