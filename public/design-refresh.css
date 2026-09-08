@@ -1,4 +1,6 @@
 /* Botanical refinement inspired by the supplied Plant Guide design kit. */
+/* Size the headline to its column so the image cannot cover its last letters. */
+@media(min-width:1121px){.hero-copy{container-type:inline-size}.hero-copy h1 span,.hero-copy h1 em{font-size:clamp(2.4rem,9cqw,3.8rem)!important;white-space:normal!important;overflow-wrap:break-word}}
 body{background:
   radial-gradient(ellipse at 88% 7%,rgba(105,139,67,.19),transparent 31rem),
   radial-gradient(ellipse at 7% 38%,rgba(205,218,171,.25),transparent 36rem),

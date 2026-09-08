@@ -18,11 +18,7 @@
   refresh.href='design-refresh.css?v=20260908-botanical-1';
   document.head.appendChild(refresh);
 
-  // Public CMS loader: active offers are shown at the top, shop products are injected below offers.
-  const cmsScript=document.createElement('script');
-  cmsScript.src='cms-public.js?v=20260829-cms-1';
-  cmsScript.async=false;
-  document.head.appendChild(cmsScript);
+  // The public CMS is loaded once by index.html.
 
   // Clean vector reconstruction of the supplied Plant Guide emblem.
   const emblem=`
