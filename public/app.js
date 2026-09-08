@@ -19,7 +19,8 @@ if('IntersectionObserver' in window){
 let navTicking=false;
 function updateNavigation(){
   const sections=qsa('main section[id]');
-  const current=sections.filter(s=>s.getBoundingClientRect().top<=150).at(-1)||sections[0];
+  const atBottom=scrollY+innerHeight>=document.documentElement.scrollHeight-4;
+  const current=atBottom?sections.at(-1):(sections.filter(s=>s.getBoundingClientRect().top<=150).at(-1)||sections[0]);
   qsa('.desktop-nav a,.mobile-menu a').forEach(a=>{
     const active=a.getAttribute('href')===`#${current?.id}`;
     a.classList.toggle('active',active);

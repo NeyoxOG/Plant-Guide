@@ -63,7 +63,7 @@
     icon.innerHTML=link?.getAttribute('href')?.startsWith('tel:')?phoneIcon:calendarIcon;
   });
 
-  document.querySelectorAll('.big-leaf').forEach(el=>el.innerHTML=leafIcon);
+  document.querySelectorAll('.big-leaf,.cta-leaf').forEach(el=>el.innerHTML=leafIcon);
 
   // Updated contact e-mail everywhere on the main page.
   const CONTACT_EMAIL='praxisnaturpur@gmail.com';
