@@ -93,19 +93,6 @@
     footerBottom.append(meta);
   }
 
-  // Replace the branded bottle hero photo with a calmer, neutral botanical image.
-  const heroImage=document.querySelector('.hero-image');
-  if(heroImage){
-    heroImage.src='https://images.unsplash.com/photo-1545558509-ebcff83ba6c1?auto=format&fit=crop&w=1400&q=75';
-    heroImage.alt='Ruhige botanische Szene mit Sukkulenten und Natursteinen';
-    heroImage.removeAttribute('srcset');
-  }
-  const heroCredit=document.querySelector('.hero-image-wrap .image-credit');
-  if(heroCredit){
-    heroCredit.href='https://unsplash.com/photos/green-succulent-beside-gray-stones-CfJH45PU_yc';
-    heroCredit.textContent='Foto: Vanessa Bucceri · Unsplash';
-  }
-
   let ticking=false;
   const update=()=>{
     const y=window.scrollY||0;
