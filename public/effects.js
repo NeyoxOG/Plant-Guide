@@ -71,6 +71,23 @@
     if(link.textContent.includes('@')) link.textContent=CONTACT_EMAIL;
   });
 
+  // Small, unobtrusive admin entry at the very bottom of the public website.
+  const footerBottom=document.querySelector('.footer-bottom');
+  if(footerBottom&&!footerBottom.querySelector('.admin-login-link')){
+    const adminLink=document.createElement('a');
+    adminLink.href='/admin.html';
+    adminLink.className='admin-login-link';
+    adminLink.textContent='Admin Login';
+    adminLink.setAttribute('aria-label','Zum Plant Guide Admin Login');
+    Object.assign(adminLink.style,{color:'inherit',opacity:'.78',textDecoration:'none',borderBottom:'1px solid currentColor',paddingBottom:'1px',whiteSpace:'nowrap'});
+    const meta=document.createElement('span');
+    meta.style.display='inline-flex';
+    meta.style.alignItems='center';
+    meta.style.gap='12px';
+    meta.append(adminLink);
+    footerBottom.append(meta);
+  }
+
   // Replace the branded bottle hero photo with a calmer, neutral botanical image.
   const heroImage=document.querySelector('.hero-image');
   if(heroImage){
