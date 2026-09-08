@@ -6,8 +6,8 @@
   <meta name="robots" content="noindex,nofollow,noarchive">
   <meta name="theme-color" content="#153f20">
   <title>Plant Guide · Admin</title>
-  <link rel="stylesheet" href="admin.css?v=20260829-cms-1">
-  <script defer src="admin.js?v=20260829-cms-1"></script>
+  <link rel="stylesheet" href="admin.css?v=20260908-login-2">
+  <script defer src="admin.js?v=20260908-login-2"></script>
 </head>
 <body>
   <div class="admin-bg" aria-hidden="true"><span></span><span></span><span></span></div>
@@ -22,7 +22,8 @@
       <h1>Willkommen zurück.</h1>
       <p class="muted">Angebote, Shop-Produkte und Medien zentral verwalten.</p>
       <form id="loginForm" class="stack">
-        <label>Admin-Passwort<input id="password" type="password" autocomplete="current-password" required placeholder="Passwort eingeben"></label>
+        <label>Benutzername<input id="username" name="username" type="text" autocomplete="username" required value="Nicole" placeholder="Benutzername"></label>
+        <label>Passwort<input id="password" name="password" type="password" autocomplete="current-password" required placeholder="Passwort eingeben"></label>
         <button class="primary" type="submit">Einloggen <span>→</span></button>
       </form>
       <p class="status" id="loginStatus" aria-live="polite"></p>
