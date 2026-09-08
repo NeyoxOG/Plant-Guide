@@ -36,9 +36,9 @@ qsa('.faq-item').forEach((item,index)=>{
 
 const serviceModal=qs('#serviceModal'), serviceTitle=qs('#serviceTitle'), serviceText=qs('#serviceText');
 const serviceCopy={
-  'Schulter- & Nacken Problematik':'Ein sanfter, persönlicher Termin mit Fokus auf Entspannung, Wahrnehmung und alltagstaugliche Impulse für Schulter und Nacken.',
+  'Schulter- & Nackenproblematik':'Ein sanfter, persönlicher Termin mit Fokus auf Entspannung, Wahrnehmung und alltagstaugliche Impulse für Schulter und Nacken.',
   'Analyse von Nahrungsergänzungsmitteln':'Wir schauen gemeinsam auf deine vorhandenen Präparate, Ziele und Fragen. Bei medizinischen Indikationen oder Wechselwirkungen ist eine ärztliche bzw. pharmazeutische Rücksprache wichtig.',
-  'Fussreflexzonenmassage':'Eine ruhige Auszeit mit Fokus auf Entspannung und Wohlbefinden. Die Anwendung ist als ergänzendes Wellness-Angebot gedacht und ersetzt keine medizinische Behandlung.',
+  'Fußreflexzonenmassage':'Eine ruhige Auszeit mit Fokus auf Entspannung und Wohlbefinden. Die Anwendung ist als ergänzendes Wellness-Angebot gedacht und ersetzt keine medizinische Behandlung.',
   'Ernährungsberatung / Umstellung':'Persönliche Orientierung für eine alltagstaugliche Ernährung. Bei diagnostizierten Erkrankungen erfolgt die Begleitung ergänzend und sollte mit medizinischem Fachpersonal abgestimmt werden.'
 };
 
