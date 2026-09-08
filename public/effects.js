@@ -5,19 +5,20 @@
   // Load the final responsive layers after all existing styles.
   const polish=document.createElement('link');
   polish.rel='stylesheet';
-  polish.href='polish.css?v=20260829-mobile-fix-4';
+  polish.href='polish.css?v=20260908-botanical-1';
   document.head.appendChild(polish);
 
   const mobileFix=document.createElement('link');
   mobileFix.rel='stylesheet';
-  mobileFix.href='mobile-fix.css?v=20260829-mobile-fix-4';
+  mobileFix.href='mobile-fix.css?v=20260908-botanical-1';
   document.head.appendChild(mobileFix);
 
-  // Public CMS loader: active offers are shown at the top, shop products are injected below offers.
-  const cmsScript=document.createElement('script');
-  cmsScript.src='cms-public.js?v=20260829-cms-1';
-  cmsScript.async=false;
-  document.head.appendChild(cmsScript);
+  const refresh=document.createElement('link');
+  refresh.rel='stylesheet';
+  refresh.href='design-refresh.css?v=20260908-botanical-1';
+  document.head.appendChild(refresh);
+
+  // The public CMS is loaded once by index.html.
 
   // Clean vector reconstruction of the supplied Plant Guide emblem.
   const emblem=`
@@ -88,19 +89,6 @@
     footerBottom.append(meta);
   }
 
-  // Replace the branded bottle hero photo with a calmer, neutral botanical image.
-  const heroImage=document.querySelector('.hero-image');
-  if(heroImage){
-    heroImage.src='https://images.unsplash.com/photo-1545558509-ebcff83ba6c1?auto=format&fit=crop&w=1400&q=75';
-    heroImage.alt='Ruhige botanische Szene mit Sukkulenten und Natursteinen';
-    heroImage.removeAttribute('srcset');
-  }
-  const heroCredit=document.querySelector('.hero-image-wrap .image-credit');
-  if(heroCredit){
-    heroCredit.href='https://unsplash.com/photos/green-succulent-beside-gray-stones-CfJH45PU_yc';
-    heroCredit.textContent='Foto: Vanessa Bucceri · Unsplash';
-  }
-
   let ticking=false;
   const update=()=>{
     const y=window.scrollY||0;
@@ -146,3 +134,4 @@
     el.style.transitionDelay=`${Math.min(i%6,5)*65}ms`;
   });
 })();
+
