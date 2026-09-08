@@ -13,7 +13,9 @@ README.md
 
 ## Funktionen
 
+- sichtbarer `Admin Login` ganz unten auf der öffentlichen Website
 - Admin-Login unter `/admin.html`
+- Benutzername + Passwort statt reinem Passwort-Login
 - Angebote/Hinweise erstellen, bearbeiten, aktivieren und löschen
 - aktive Angebote werden automatisch oberhalb der Website-Inhalte angezeigt
 - Shop-Produkte erstellen, bearbeiten und löschen
@@ -21,7 +23,7 @@ README.md
 - Produktbeschreibung, Reihenfolge und Sichtbarkeit
 - Medienbibliothek mit Bild-Upload über Cloudflare R2
 - Produktbilder direkt aus der Mediathek auswählen
-- D1 für Inhalte, Login-Sitzungen und Schutz vor Login-Bruteforce
+- D1 für Admin-Benutzer, Inhalte, Login-Sitzungen und Schutz vor Login-Bruteforce
 - HttpOnly/Secure/SameSite-Session-Cookie
 - bestehendes Plant-Guide-Design, Animationen und responsive Darstellung bleiben erhalten
 
@@ -48,19 +50,11 @@ Die Binding-Namen müssen exakt lauten:
 npx wrangler d1 execute plant-guide-db --remote --file=schema.sql
 ```
 
-Der Befehl kann nach Schema-Erweiterungen erneut ausgeführt werden, sofern die Änderungen migrationssicher formuliert sind.
+`schema.sql` legt Tabellen für Angebote, Produkte, Medien, Sitzungen und Admin-Benutzer an. Der initiale Admin-Benutzer `Nicole` wird dabei automatisch angelegt. Das von der Besitzerin festgelegte Passwort liegt **nicht im Klartext** im Repository, sondern nur als PBKDF2-SHA256-Hash mit individuellem Salt.
 
-## 3. Admin-Passwort als Secret setzen
+Der Befehl kann erneut ausgeführt werden, weil die Tabellen und der initiale Benutzer idempotent angelegt werden.
 
-Das Passwort wird niemals in GitHub gespeichert:
-
-```bash
-npx wrangler pages secret put ADMIN_PASSWORD --project-name plant-guideeh
-```
-
-Wrangler fragt das Passwort verdeckt ab.
-
-## 4. Deploy
+## 3. Deploy
 
 Da `wrangler.toml` `public/` als Build-Ausgabe definiert, reicht anschließend:
 
@@ -72,15 +66,22 @@ Bei GitHub-Integration kann Cloudflare `main` weiterhin automatisch deployen. Wi
 
 ## Admin
 
-Nach erfolgreicher Einrichtung:
+Nach erfolgreicher Einrichtung entweder unten auf der Website auf `Admin Login` klicken oder direkt öffnen:
 
 ```text
 https://plant-guideeh.pages.dev/admin.html
 ```
 
+Benutzername des initialen Kontos:
+
+```text
+Nicole
+```
+
 ## Sicherheit
 
-- Passwort nur als Cloudflare Secret `ADMIN_PASSWORD`
+- Admin-Passwort wird nicht im Klartext gespeichert
+- PBKDF2-SHA256 mit individuellem Salt und 210.000 Iterationen
 - Admin-Sitzungen serverseitig in D1
 - Cookie: `HttpOnly`, `Secure`, `SameSite=Strict`
 - Login-Rate-Limit nach wiederholten Fehlversuchen
